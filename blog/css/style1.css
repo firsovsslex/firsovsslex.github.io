@@ -1,0 +1,17 @@
+body{
+	background: gold;
+	font-family: cursive;
+}
+img{
+	width: 400px;
+}
+h2{
+	font-size: 60px;
+}
+p{
+	color: rgb(148, 123, 257);
+	font-size: 30px;
+}
+a{
+    font-size: 40px;
+}

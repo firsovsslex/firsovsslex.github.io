@@ -1,0 +1,9 @@
+body{
+	font-family: fantasy;
+}
+a{
+	color: gold;
+	font-size: 40px;
+	background: linear-gradient(#00ff4e, #158e06);
+    margin: 100px 100px;
+}

@@ -1,0 +1,51 @@
+body{
+	font-family: sans-serif;
+}
+div{
+	margin: auto;
+	padding: 350px 50px;
+}
+a{
+	color:#fff ;
+	font-size: 20px;
+	text-decoration: none;
+	padding: 18px 95px;
+	margin: 5px;
+	border-radius: 5px;
+	transition: .5s;
+}
+.orange{
+	background: linear-gradient(to left, #FFC371, #FF5F6D, #FFC371);
+	background-size: 200%;
+}	
+.orange:hover{
+	background-position: right;
+}
+.purple{
+	background: linear-gradient(to left, #FC5C7D, #6A82FB, #FC5C7D);
+	background-size: 200%;
+}
+.purple:hover{
+	background-position: right;
+}
+.green{
+	background: linear-gradient(to left, #00F260, #0575E6, #00F260);
+	background-size: 200%;
+}
+.green:hover{
+	background-position: right;
+}
+.blue{
+	background: linear-gradient(to left, #6dd5ed, #2193b0, #6dd5ed);
+	background-size: 200%;
+}
+.blue:hover{
+	background-position: right;
+}
+.yellow{
+	background: linear-gradient(to left, #F37335, #FDC830, #F37335);
+	background-size: 200%;
+}
+.yellow:hover{
+	background-position: right;
+}
