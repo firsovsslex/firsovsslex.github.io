@@ -1,0 +1,17 @@
+body{
+	background: #0e0e0e;
+}
+div{
+	display: block;
+	top:0;
+	text-align: left;
+	float: left;
+	margin-right: 48px;
+	width: 68px;
+	height: 68px;
+	background: url(../img/instagram.png) no-repeat;
+}
+a{
+	height: 100%;
+	display: block;
+}

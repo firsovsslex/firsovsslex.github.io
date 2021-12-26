@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Ambient';
+    src: url('Ambient-Regular.eot');
+    src: local('Ambient Regular'), local('Ambient-Regular'),
+        url('Ambient-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Ambient-Regular.woff2') format('woff2'),
+        url('Ambient-Regular.woff') format('woff'),
+        url('Ambient-Regular.ttf') format('truetype'),
+        url('Ambient-Regular.svg#Ambient-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
