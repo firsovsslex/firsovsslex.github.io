@@ -188,6 +188,26 @@ class Clock{
         let seconds = document.querySelector('#seconds');
         let reset = document.getElementById('reset');
         let start = document.getElementById('pause');
+        
+        start.onmouseover = () =>{
+            if(this.timeout == false){
+                start.style.background = 'grey';
+            }
+        }
+        start.onmouseout = () =>{
+            if(this.timeout == false){
+                start.style.background = 'white';
+            }
+        }
+
+        
+        reset.onmouseover = () =>{
+            reset.style.background = 'grey';  
+        }
+        reset.onmouseout = () =>{    
+            reset.style.background = 'white';    
+        }
+        
 
         reset.onmousedown = function(e){
             return false;
