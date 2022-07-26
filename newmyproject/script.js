@@ -189,24 +189,32 @@ class Clock{
         let reset = document.getElementById('reset');
         let start = document.getElementById('pause');
         
-        start.onmouseover = () =>{
-            if(this.timeout == false){
-                start.style.background = 'grey';
+        start.onmouseover = () => {
+            if (window.innerWidth >= 676) {
+                if (this.timeout == false) {
+                    start.style.background = "grey";
+                }
             }
-        }
-        start.onmouseout = () =>{
-            if(this.timeout == false){
-                start.style.background = 'white';
+        };
+        start.onmouseout = () => {
+            if (window.innerWidth >= 676) {
+                if (this.timeout == false) {
+                    start.style.background = "white";
+                }
             }
-        }
+        };
+       
 
-        
-        reset.onmouseover = () =>{
-            reset.style.background = 'grey';  
-        }
-        reset.onmouseout = () =>{    
-            reset.style.background = 'white';    
-        }
+        reset.onmouseover = () => {
+            if (window.innerWidth >= 676) {
+                reset.style.background = "grey";
+            }
+        };
+        reset.onmouseout = () => {
+            if (window.innerWidth >= 676) {
+                reset.style.background = "white";
+            }
+        };
         
 
         reset.onmousedown = function(e){
