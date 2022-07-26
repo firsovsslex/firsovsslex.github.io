@@ -58,6 +58,7 @@ class Clock {
         let ico = document.getElementById("start-pauseIcon");
         let text = document.getElementById("startbutton");
         let button = document.querySelector("#pause");
+        let textb = document.querySelectorAll('.textb');
 
         this.timerActivate = false;
         this.time = new Date(0, 0, 0, 0, 0, 0);
@@ -80,6 +81,8 @@ class Clock {
 
         button.style.cursor = "pointer";
         button.style.backgroundColor = "white";
+        textb[0].style.cursor = 'pointer';
+
     }
 
     start() {
@@ -106,6 +109,7 @@ class Clock {
 
                     if (this.h == 0 && this.m == 0 && this.s == 0) {
                         this.timeout = true;
+                        let textb = document.querySelectorAll('.textb');
                         let button = document.querySelector("#pause");
                         button.style.cursor = "initial";
                         button.style.backgroundColor = "grey";
@@ -113,6 +117,7 @@ class Clock {
                         text.innerHTML = "Start";
                         ico.style.width = "26px";
                         ico.style.height = "26px";
+                        textb[0].style.cursor = 'default';
                         this.audio();
 
                         clearTimeout(cycle);
