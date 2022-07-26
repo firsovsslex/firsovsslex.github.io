@@ -13,6 +13,7 @@ body{
     margin: 4px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 .container{
     display: flex;
@@ -53,9 +54,8 @@ body{
     display: flex;
     transition: .5s;
 }
-.button:hover{
-    background-color: gray;
-}
+    
+
 .buttons{
     margin: 10px auto;
     width: 100%;
@@ -115,6 +115,7 @@ body{
 .textb{
     margin: 0 10px;
     font-size: 30px;
+    align-self: center;
 }
 #time{
     font-size: 120px;
@@ -122,28 +123,54 @@ body{
     color: white;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @font-face {
     font-family: Ubuntu;
     src: url(fonts/Ubuntu-Regular.ttf);
+}
+
+@media (max-width: 675px) {
+    .clock{
+        width: 350px;
+        height: 350px;
+    }
+    .title{
+        font-size: 25px;
+        margin: 12.5px auto;
+    }
+    .title2{
+        font-size: 15px;
+        margin: 12.5px auto;
+    }
+    .button{
+        font-size: 15px;
+        margin: 10px 5px;
+    }
+    .values{
+        font-size: 15px;
+    }
+    .textb{
+        font-size: 20px;
+    }
+    .nastr{
+        margin: 10px 2px;
+    }
+    .settings{
+        height: 120%;
+    }
+    .minus{
+        width: 17.5px;
+        height: 16px;
+        background-size: cover;
+        align-self: center;
+    }
+    .plus{
+        align-self: center;
+        width: 17px;
+        height: 16px;
+        background-size: cover;
+    }
+    #time{
+        font-size: 60px;
+        margin: 12px auto;
+    }
 }
