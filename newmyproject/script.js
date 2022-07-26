@@ -174,7 +174,9 @@ class Clock{
 
     stopAudio(){
         if(this.startAudio = true){
-            this.sound.load();
+             if(this.sound !== undefined){
+                this.sound.load();
+             }
         }
     }
 
