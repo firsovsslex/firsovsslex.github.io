@@ -118,6 +118,7 @@ body{
     align-self: center;
 }
 #time{
+    //main
     font-size: 120px;
     margin: 25px auto;
     color: white;
