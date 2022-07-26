@@ -151,12 +151,7 @@ class Clock{
         this.sound.preload = 'none';
         let playPromise = this.sound.play();
         if (playPromise !== undefined) {
-            playPromise.then(_ => {  
-                
-                //undefined
-           
-            })
-            .catch(error => {
+            playPromise.then(_ => {         
                 this.sound.play();
                 function out(){
                     if(timer.sound.ended == true){
@@ -165,8 +160,12 @@ class Clock{
                     }
                 }
                 setTimeout(()=>out(), 24000);
+           
+            })
+            .catch(error => {
+                console.log('error load');
                 
-             });
+            });
         }
 
         
