@@ -151,8 +151,9 @@ class Clock{
         this.sound.preload = 'none';
         let playPromise = this.sound.play();
         if (playPromise !== undefined) {
-            playPromise.then(_ => {    
+            playPromise.then(_ => {  
                 
+                //undefined
            
             })
             .catch(error => {
