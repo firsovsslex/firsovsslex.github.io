@@ -1,3 +1,4 @@
+
 class Clock {
     constructor() {
         this.clock = document.getElementById("time");
@@ -9,7 +10,6 @@ class Clock {
         this.addEvents();
         this.clickStart = false;
         this.buttonsActivate = true;
-        this.startAudio = false;
         this.timeout = false;
     }
     correct(time) {
@@ -76,7 +76,6 @@ class Clock {
             elem.style.cursor = "pointer";
         }
         this.stopAudio();
-        this.startAudio = false;
         this.timeout = false;
 
         button.style.cursor = "pointer";
@@ -121,10 +120,12 @@ class Clock {
                         this.audio();
 
                         clearTimeout(cycle);
-                    } else setTimeout(timer, 1000);
+                    } 
+                    else setTimeout(timer, 1000);
                 }
             }
-        } else {
+        } 
+        else {
             this.timerActivate = false;
         }
         if (this.clickStart == true) {
@@ -140,14 +141,12 @@ class Clock {
         }
     }
     audio() {
-        this.startAudio = true;
         this.sound = new Audio();
         this.sound.src = "audio.mp3";
         let playPromise = this.sound.play();
         if (playPromise !== undefined) {
-            playPromise
-                .then((_) => {
-                    this.sound.play();
+            playPromise.then((_) => {
+                    
                     function out() {
                         if (timer.sound.ended == true) {
                             timer.sound.play();
@@ -156,15 +155,13 @@ class Clock {
                     }
                     setTimeout(() => out(), 24000);
                 })
-                .catch((error) => {});
+            .catch((error) => alert(error));
         }
     }
 
     stopAudio() {
-        if ((this.startAudio = true)) {
-            if (this.sound !== undefined) {
-                this.sound.load();
-            }
+        if (this.sound !== undefined) {
+            this.sound.load();    
         }
     }
 
