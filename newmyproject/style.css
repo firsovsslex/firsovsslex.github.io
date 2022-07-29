@@ -135,7 +135,7 @@ body{
 
 @media (max-width: 675px) {
     .clock{
-        width: 350px;
+        width: 365px;
         height: 350px;
     }
     .title{
@@ -163,15 +163,15 @@ body{
         height: 120%;
     }
     .minus{
-        width: 17.5px;
-        height: 16px;
+        width: 21px;
+        height: 19.2px;
         background-size: cover;
         align-self: center;
     }
     .plus{
         align-self: center;
-        width: 17px;
-        height: 16px;
+        width: 20.4px;
+        height: 19.2px;
         background-size: cover;
     }
     #time{
