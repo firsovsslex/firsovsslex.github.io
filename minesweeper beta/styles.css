@@ -130,12 +130,14 @@ body{
 
 .cont{
     margin: 20px 0;
-    width: 100%;
+    width: 150%;
     display: flex;
+    justify-content: space-between;
 }
 .timer{
-    background-color: indigo;
+    background-color: blueviolet;
     border: 3px solid black;
+    height: 60px;
 }
 
 .options{
@@ -144,7 +146,7 @@ body{
     background-color: bisque;
     border-radius: 15%;
     border: 4px solid black;
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -160,16 +162,31 @@ body{
     margin: 15px 0;
 }
 
-.submit{
+.res{
     padding: 25px 40px;
     background-color: green;
     border: 2px solid black;
     font-size: 30px;
     cursor: pointer;
 }
-.submit:hover{
+.res:hover{
     background-color: rgb(6, 199, 6);
 }
 .znach{
     font-size: 25px;
+}
+
+.divcounter{
+    font-size: 50px;
+    height: 60px;
+    font-family: monospace;
+    color: red;
+    background-color: blueviolet;
+    border: 3px solid black;
+    padding: 0 5px;
+}
+
+#counter{
+    margin: 0;
+    display: inline;
 }
