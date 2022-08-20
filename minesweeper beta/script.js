@@ -19,12 +19,9 @@ function StartScript() {
     function clickOptions() {
         container.innerHTML = "";
         let nastr = document.createElement("div");
-        let form = document.createElement("form");
-        form.setAttribute("name", "Values");
-        let submit = document.createElement("input");
-        submit.setAttribute("type", "submit");
-        submit.setAttribute("value", "Сохранить");
-        submit.className = "submit";
+        let resbutton = document.createElement('button');
+        resbutton.className = 'res';
+        resbutton.textContent = 'Сохранить';
         nastr.className = "options";
         let texts = ["% Мин", "Длина поля", "Высота поля"];
         let ranges = [
@@ -37,7 +34,7 @@ function StartScript() {
             localStorage.getItem("width") ?? 10,
             localStorage.getItem("height") ?? 10,
         ];
-        let names = ["value1", "value2", "value3"];
+        let names = ["procent", "width", "height"];
         for (let i = 0; i < 3; i++) {
             let input = document.createElement("input");
             let text = document.createElement("p");
@@ -53,56 +50,62 @@ function StartScript() {
             input.setAttribute("name", names[i]);
             input.setAttribute("value", um[i]);
             value.innerHTML = input.getAttribute("value");
-            form.append(text, value, input);
+            nastr.append(text, value, input);
         }
-        form.style.display = "flex";
-        form.style.flexDirection = "column";
-        form.style.alignItems = "center";
-        form.append(submit);
+        nastr.append(resbutton);
+        let inputs = Array.from(nastr.querySelectorAll('.inputs'));
+        let last = inputs.pop();  
+        
+        let [a, b] = inputs;
+        a.oninput = function(){  
+            a.previousElementSibling.textContent = a.value;
+        }
 
-        nastr.append(form);
+        b.oninput = function(){
+            b.previousElementSibling.textContent = b.value;
+        }
+
+        last.oninput = function(){
+            last.previousElementSibling.textContent = last.value;
+        }
+
+        
+
+        resbutton.onclick = function(){
+            for(let inp of nastr.querySelectorAll('.inputs')){
+                localStorage.setItem(inp.name, inp.value);
+            }
+            location = location;
+        }
 
         container.append(nastr);
-
-        for (let inp of nastr.querySelectorAll(".inputs")) {
-            inp.oninput = function () {
-                inp.previousElementSibling.innerHTML = inp.value;
-            };
-        }
-
-        document.forms.Values.onsubmit = function () {
-            localStorage.setItem("procent", this.value1.value);
-            localStorage.setItem("width", this.value2.value);
-            localStorage.setItem("height", this.value3.value);
-        };
+        
     }
-
-    // function createCounter(){
-    //     let counter = document.createElement('p');
-    //     counter.className = 'counter';
-    //     let count = Array.from(div.querySelectorAll('.square')).filter(elem => gen[elem.y][elem.x]).length;
-
-    // }
 
     function startGame() {
         container.innerHTML = "";
         let firstClick = true;
+        let f1 = true;
         let pole = {
             minesGen: localStorage.getItem("procent") / 100,
             lines: localStorage.getItem("width"),
             columns: localStorage.getItem("height"),
         };
-        pole.mines = pole.lines * pole.columns * pole.minesGen;
+        pole.mines = pole.lines * pole.minesGen < 1? 1: pole.lines * pole.minesGen;
 
         let cont = document.createElement("div");
         cont.className = "cont";
         container.prepend(cont);
 
-        let div = createPole(container, pole.lines, pole.columns);
+        let div = createPole(pole.lines, pole.columns);
+        container.append(div);
+
         let interval = createTimer(cont);
         let gen = generation();
-
+        let counter = createCounter();
+        cont.append(counter);
         console.log(gen);
+
 
         function squareEvents(square) {
             square.onclick = () => {
@@ -124,6 +127,34 @@ function StartScript() {
             };
         }
 
+        function createCounter(){
+            let counter = document.createElement('p');
+            counter.id = 'counter';
+            let div = document.createElement('div');
+            div.className = 'divcounter';
+            counter.textContent = '000';
+            div.append(counter);
+            return div;
+        }
+
+        function counterActivate(){
+            let count = gen.map(array => array.filter(item => item).length).reduce((pr, cr) => pr+cr, 0).toString();
+            counter.textContent = count;
+        }
+
+        function counterChange(z){
+            let count = +counter.textContent;
+            eval('count'+z);
+            if(count >= 0){
+                let nulls = [];
+                for(let i = 0; i < 3-count.toString().length; i++){
+                    nulls.push('0');
+                }
+                count = nulls.join``+count;
+            }
+            counter.textContent = count;
+        }
+
         function createTimer(cont) {
             let timer = document.createElement("div");
             timer.className = "timer";
@@ -141,20 +172,16 @@ function StartScript() {
                     clock.getMinutes(),
                     clock.getSeconds(),
                 ];
-                time.textContent = time.textContent
-                    .split(":")
-                    .map((_, i) =>
-                        vr[i].toString().length < 2 ? "0" + vr[i] : vr[i]
-                    ).join`:`;
+                time.textContent = time.textContent.split(":")
+                .map((_, i) => vr[i].toString().length < 2 ? "0" + vr[i] : vr[i]).join`:`;
             }, 1000);
         }
 
-        function createPole(container, width, height) {
+        function createPole(width, height) {
             let div = document.createElement("div");
             div.className = "pole";
             div.style.maxWidth = width * 32 + "px";
             div.style.maxHeight = height * 32 + "px";
-            container.append(div);
             return div;
         }
 
@@ -174,11 +201,7 @@ function StartScript() {
                     squareEvents(square);
                 }
                 let rand = [];
-                for (
-                    let k = 0;
-                    k < Math.trunc(pole.mines / pole.columns);
-                    k++
-                ) {
+                for (let k = 0; k < Math.trunc(pole.mines); k++) {
                     let value = Math.trunc(Math.random() * pole.lines);
                     if (rand[value]) {
                         k--;
@@ -227,19 +250,15 @@ function StartScript() {
 
                 let all = Array.from(div.querySelectorAll(".square"));
 
-                if (
-                    !(
-                        num -
-                        all.filter((item) =>
-                            near.some(
-                                (v) =>
-                                    item.y === v[0] &&
-                                    item.x === v[1] &&
-                                    item.flaged
-                            )
-                        ).length
-                    )
-                ) {
+                if (!(num - all.filter((item) => near.some(
+                    (v) =>
+                        item.y === v[0] &&
+                        item.x === v[1] &&
+                        item.flaged
+                        )
+                ).length
+                    )) 
+                    {
                     all = all.filter((item) =>
                         near.some(
                             (v) =>
@@ -284,21 +303,25 @@ function StartScript() {
                 sq.className = "square";
                 sq.style.backgroundColor = "lightgrey";
             });
-            setTimeout(() => {
-                if (isWin()) win();
-            }, 20);
+            if(f1) {
+                counterActivate();
+                f1 = !f1;
+            }
+            if (isWin()) win();
+            
         }
 
         function setFlag(square) {
             if (!square.flaged) {
                 square.style.backgroundImage = "url(img/flag.png)";
+                counterChange('--');
             } else {
                 square.style.backgroundImage = null;
+                counterChange('++');
             }
-            square.flaged = !square.flaged;
-            setTimeout(() => {
-                if (isWin()) win();
-            }, 20);
+            square.flaged = !square.flaged;  
+            if (isWin()) win();
+            
         }
 
         function win() {
@@ -341,9 +364,7 @@ function StartScript() {
             let squares = Array.from(div.querySelectorAll(".square"));
             let allflags = squares.filter((elem) => elem.flaged).length;
             let allbombs = squares.filter((elem) => gen[elem.y][elem.x]).length;
-            let alltiles = squares.filter(
-                (elem) => !gen[elem.y][elem.x]
-            ).length;
+            let alltiles = squares.filter((elem) => !gen[elem.y][elem.x]).length;
             let allchecked = squares.filter((elem) => elem.checked).length;
             if (allchecked === alltiles && allflags === allbombs) {
                 return true;
