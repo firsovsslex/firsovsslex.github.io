@@ -139,6 +139,11 @@ function StartScript() {
 
         function counterActivate(){
             let count = gen.map(array => array.filter(item => item).length).reduce((pr, cr) => pr+cr, 0).toString();
+            let nulls = [];
+            for(let i = 0; i < 3-count.length; i++){
+                nulls.push('0');
+            }
+            count = nulls.join``+count;
             counter.textContent = count;
         }
 
