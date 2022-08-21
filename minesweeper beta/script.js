@@ -53,23 +53,12 @@ function StartScript() {
             nastr.append(text, value, input);
         }
         nastr.append(resbutton);
-        let inputs = Array.from(nastr.querySelectorAll('.inputs'));
-        let last = inputs.pop();  
-        
-        let [a, b] = inputs;
-        a.oninput = function(){  
-            a.previousElementSibling.textContent = a.value;
-        }
-
-        b.oninput = function(){
-            b.previousElementSibling.textContent = b.value;
-        }
-
-        last.oninput = function(){
-            last.previousElementSibling.textContent = last.value;
-        }
-
-        
+        let inputs = Array.from(nastr.querySelectorAll('.inputs'));  
+        for(let input of inputs){
+            input.oninput = function(){
+                input.previousElementSibling.textContent = input.value;
+            }
+        }     
 
         resbutton.onclick = function(){
             for(let inp of nastr.querySelectorAll('.inputs')){
@@ -87,15 +76,24 @@ function StartScript() {
         let firstClick = true;
         let f1 = true;
         let pole = {
-            minesGen: localStorage.getItem("procent") / 100,
-            lines: localStorage.getItem("width"),
-            columns: localStorage.getItem("height"),
+            minesGen: +localStorage.getItem("procent") / 100,
+            lines: +localStorage.getItem("width"),
+            columns: +localStorage.getItem("height"),
         };
         pole.mines = pole.lines * pole.minesGen < 1? 1: pole.lines * pole.minesGen;
 
         let cont = document.createElement("div");
         cont.className = "cont";
         container.prepend(cont);
+
+        let metriks = document.createElement('div');
+        metriks.classList.add('square');
+        container.append(metriks);
+
+        let sqwidth = metriks.offsetWidth;
+        let sqheight = metriks.offsetHeight;
+
+        metriks.remove();
 
         let div = createPole(pole.lines, pole.columns);
         container.append(div);
@@ -104,7 +102,18 @@ function StartScript() {
         let gen = generation();
         let counter = createCounter();
         cont.append(counter);
-        console.log(gen);
+
+        let lost = document.createElement("p");
+        lost.className = "lost";
+        lost.textContent = "Defeat";
+        document.body.append(lost);
+
+        let winm = document.createElement("p");
+        winm.className = "win";
+        winm.textContent = "Victory";
+        document.body.append(winm);
+
+        
 
 
         function squareEvents(square) {
@@ -184,9 +193,9 @@ function StartScript() {
 
         function createPole(width, height) {
             let div = document.createElement("div");
-            div.className = "pole";
-            div.style.maxWidth = width * 32 + "px";
-            div.style.maxHeight = height * 32 + "px";
+            div.className = "pole";       
+            div.style.maxWidth = width * sqwidth + "px";
+            div.style.maxHeight = height * sqheight + "px";
             return div;
         }
 
@@ -337,12 +346,9 @@ function StartScript() {
             }
             clearInterval(interval);
             restartButton();
-            let win = document.createElement("p");
-            win.className = "win";
-            win.textContent = "Victory";
-            win.style.left = `${window.innerWidth / 2 - 90}px`;
-            win.style.top = `${window.innerHeight / 2 - 30}px`;
-            document.body.append(win);
+            winm.display = 'inline';
+            winm.style.left = document.body.clientWidth/2-winm.offsetWidth/2+'px';
+            winm.style.top = document.body.clientHeight/2-winm.offsetHeight/2+'px';
         }
 
         function lostGame() {
@@ -357,12 +363,10 @@ function StartScript() {
             }
             restartButton();
             clearInterval(interval);
-            let lost = document.createElement("p");
-            lost.className = "lost";
-            lost.textContent = "Defeat";
-            lost.style.left = `${window.innerWidth / 2 - 90}px`;
-            lost.style.top = `${window.innerHeight / 2 - 30}px`;
-            document.body.append(lost);
+            lost.style.display = 'inline';
+            lost.style.left = document.body.clientWidth/2-lost.offsetWidth/2+'px'
+            lost.style.top = document.body.clientHeight/2-lost.offsetHeight/2+'px';
+            
         }
 
         function isWin() {
