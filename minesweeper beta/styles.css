@@ -95,8 +95,8 @@ body{
 .restart{
     height: 60px;
     width: 150px;
-    margin: 20px 10px;
-    font-size: 30px;
+    margin: 5px 0 0;
+    font-size: 25px;
     background-color: brown;
     cursor: pointer;
 }
@@ -109,8 +109,7 @@ body{
     line-height: 60px;
     margin: 0;
     position: absolute;
-    left: 50%;
-    top: 50%;
+    display: none;
 }
 
 .lost{
@@ -122,8 +121,7 @@ body{
     line-height: 60px;
     margin: 0;
     position: absolute;
-    left: 50%;
-    top: 50%;
+    display: none;
 }
 #time{
     font-size: 50px;
@@ -223,6 +221,10 @@ body{
     }
     .menu{
         width: 230px;
+    }
+    .square{
+        width: 14px;
+        height: 14px;
     }
 
 }
