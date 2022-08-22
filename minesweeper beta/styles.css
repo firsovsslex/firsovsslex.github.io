@@ -5,6 +5,7 @@ body{
     margin: 0;
     height: 100%;
     font-family: 'Helvetica';
+    overflow: hidden;
 }
 .name{
     font-size: 80px;
