@@ -180,6 +180,7 @@ body{
 }
 
 .divcounter{
+    margin: auto 20px;
     font-size: 50px;
     height: 60px;
     font-family: monospace;
