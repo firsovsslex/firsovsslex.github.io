@@ -346,7 +346,7 @@ function StartScript() {
             }
             clearInterval(interval);
             restartButton();
-            winm.display = 'inline';
+            winm.style.display = 'inline';
             winm.style.left = document.body.clientWidth/2-winm.offsetWidth/2+'px';
             winm.style.top = document.body.clientHeight/2-winm.offsetHeight/2+'px';
         }
