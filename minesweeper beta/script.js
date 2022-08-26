@@ -1,4 +1,4 @@
-new Promise((resolve) => (window.onload = () => resolve("Done"))).then(StartScript,alert);
+document.addEventListener('DOMContentLoaded', StartScript);
 
 function StartScript() {
     let startButton = document.querySelector("#play");
@@ -113,25 +113,29 @@ function StartScript() {
         winm.textContent = "Victory";
         document.body.append(winm);
 
-        
 
-
-        function squareEvents(square) {
-            square.onclick = () => {
-                if (!square.flaged) {
-                    if (firstClick) gen[square.y][square.x] = 0;
-                    if (gen[square.y][square.x]) {
-                        lostGame();
-                        return;
+        function squareEvents(div) {
+            div.onclick = function(e){
+                let square = e.target;
+                if(square.classList.contains('square')){
+                    if (!square.flaged) {
+                        if (firstClick) gen[square.y][square.x] = 0;
+                        if (gen[square.y][square.x]) {
+                            lostGame();
+                            return;
+                        }
+                        check(square);
                     }
-                    check(square);
-                }
+                }             
             };
 
-            square.oncontextmenu = () => {
-                if (!square.checked) {
-                    setFlag(square);
-                }
+            div.oncontextmenu = function(e) {
+                let square = e.target;
+                if(square.classList.contains('square')){
+                    if (!square.checked) {
+                        setFlag(square);
+                    }
+                }            
                 return false;
             };
         }
@@ -196,6 +200,7 @@ function StartScript() {
             div.className = "pole";       
             div.style.maxWidth = width * sqwidth + "px";
             div.style.maxHeight = height * sqheight + "px";
+            squareEvents(div);
             return div;
         }
 
@@ -212,7 +217,6 @@ function StartScript() {
                     square.checked = false;
                     square.flaged = false;
                     div.append(square);
-                    squareEvents(square);
                 }
                 let rand = [];
                 for (let k = 0; k < Math.trunc(pole.mines); k++) {
