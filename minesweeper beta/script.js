@@ -103,15 +103,9 @@ function StartScript() {
         let counter = createCounter();
         cont.append(counter);
 
-        let lost = document.createElement("p");
-        lost.className = "lost";
-        lost.textContent = "Defeat";
-        document.body.append(lost);
+        let end = document.createElement("p");
+        document.body.append(end);
 
-        let winm = document.createElement("p");
-        winm.className = "win";
-        winm.textContent = "Victory";
-        document.body.append(winm);
 
 
         function squareEvents(div) {
@@ -344,15 +338,11 @@ function StartScript() {
 
         function win() {
             for (let sq of div.children) {
-                sq.onclick = null;
-                sq.oncontextmenu = null;
-                sq.className = "square";
+                sq.classList.remove('hover');
             }
-            clearInterval(interval);
-            restartButton();
-            winm.style.display = 'inline';
-            winm.style.left = document.body.clientWidth/2-winm.offsetWidth/2+'px';
-            winm.style.top = document.body.clientHeight/2-winm.offsetHeight/2+'px';
+            end.className = "win";
+            end.textContent = "Victory";
+            reset();
         }
 
         function lostGame() {
@@ -361,16 +351,22 @@ function StartScript() {
                     sq.style.backgroundColor = "red";
                     sq.style.backgroundImage = "url(img/bomb.png)";
                 }
-                sq.onclick = null;
-                sq.oncontextmenu = null;
-                sq.className = "square";
+                sq.classList.remove('hover');
             }
-            restartButton();
-            clearInterval(interval);
-            lost.style.display = 'inline';
-            lost.style.left = document.body.clientWidth/2-lost.offsetWidth/2+'px'
-            lost.style.top = document.body.clientHeight/2-lost.offsetHeight/2+'px';
+            end.className = "lost";
+            end.textContent = "Defeat";
+            reset();
             
+        }
+
+        function reset(){
+            div.onclick = null;
+            div.oncontextmenu = null;
+            clearInterval(interval);
+            restartButton();         
+            end.style.display = 'inline';
+            end.style.left = document.body.clientWidth/2-end.offsetWidth/2+'px'
+            end.style.top = document.body.clientHeight/2-end.offsetHeight/2+'px';
         }
 
         function isWin() {
