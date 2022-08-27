@@ -126,10 +126,12 @@ function StartScript() {
             div.oncontextmenu = function(e) {
                 let square = e.target;
                 if(square.classList.contains('square')){
-                    if (!square.checked) {
-                        setFlag(square);
+                    if(!firstClick){
+                        if (!square.checked) {
+                            setFlag(square);
+                        }
                     }
-                }            
+                }          
                 return false;
             };
         }
