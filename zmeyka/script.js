@@ -49,23 +49,24 @@ class Field {
 
             let next = this.arrField[this.y][this.x];
 
-            if (this.snake.includes(next)) {
-                this.lose();
-                return;
-            }
-
             if (next.isFood) {
                 this.snakeLength++;
                 next.isFood = false;
                 this.createFood();
             }
 
-            next.style.backgroundColor = "red";
-            this.snake.push(next);
-
             if (!this.snakeLength) {
                 this.snake.shift().style.backgroundColor = "";
             } else this.snakeLength--;
+
+            if (this.snake.includes(next)) {
+                this.lose();
+                return;
+            }
+
+            next.style.backgroundColor = "red";
+            this.snake.push(next);  
+            
             this.nextTimeout = false;
             setTimeout(func, this.field.interval);
         }
