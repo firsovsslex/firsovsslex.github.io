@@ -25,18 +25,16 @@ class Field {
         this.nextTimeout = null;
         this.firstEvent = true;
         this.createFood();
+        this.score = this.createScore();
     }
 
     startMove(way) {
         let func = intervalf.bind(this);
 
         function compare(cord, max) {
-            if (cord > max - 1) {
-                cord = 0;
-            } else if (cord < 0) {
-                cord = max - 1;
-            }
-            return cord;
+            if (cord > max - 1 || cord < 0) {
+                return true;
+            }           
         }
 
         function intervalf() {
@@ -44,14 +42,17 @@ class Field {
             this.y += way[0];
             this.x += way[1];
 
-            this.y = compare(this.y, this.field.width);
-            this.x = compare(this.x, this.field.height);
+            if(compare(this.y, this.field.width) || compare(this.x, this.field.height)){
+                this.lose();
+                return;
+            }    
 
             let next = this.arrField[this.y][this.x];
 
             if (next.isFood) {
                 this.snakeLength++;
                 next.isFood = false;
+                this.changeScore(5);
                 this.createFood();
             }
 
@@ -65,7 +66,8 @@ class Field {
             }
 
             next.style.backgroundColor = "red";
-            this.snake.push(next);  
+            this.snake.push(next);
+
             
             this.nextTimeout = false;
             setTimeout(func, this.field.interval);
@@ -117,6 +119,23 @@ class Field {
         }
     }
 
+    changeScore(och){
+        let plusscore = (+this.score.innerHTML + och).toString();
+        let scoreLength = plusscore.length;
+        for(let i = 0; i < 6 - scoreLength; i++){
+            plusscore = '0'+plusscore;
+        }
+        this.score.innerHTML = plusscore;
+    }
+
+    createScore(){
+        let score = document.createElement('p');
+        score.classList.add('score');
+        score.innerHTML = '000000';
+        container.prepend(score);
+        return score;
+    }
+
     createPole() {
         let cell = document.createElement("div");
         cell.classList.add("klet");
@@ -139,8 +158,6 @@ pole.append(cell);
 let offsetW = cell.offsetWidth;
 let offsetH = cell.offsetHeight;
 cell.remove();
-
 let field = new Field(pole.offsetWidth / offsetW, pole.offsetHeight / offsetH, 50, 2);
-
 document.addEventListener("keydown", field.keyDown);
 
