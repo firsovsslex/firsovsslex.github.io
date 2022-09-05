@@ -42,8 +42,17 @@ body{
 .restart{
     padding: 5px 10px;
     font-size: 45px;
-    margin: 20px auto;
+    margin: 15px auto;
     background-color: red;
     color: white;
     cursor: pointer;
+}
+
+.score{
+    padding: 10px 20px;
+    font-size: 45px;
+    background-color: black;
+    border: 2px solid red;
+    color: yellow;
+    margin: 12px auto;
 }
