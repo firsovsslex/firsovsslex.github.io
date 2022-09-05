@@ -108,8 +108,9 @@ class Field {
 
     createFood() {
         while (true) {
-            let y = Math.trunc(Math.random() * this.field.height);
-            let x = Math.trunc(Math.random() * this.field.width);
+            let random = [Math.random(), Math.random()].map(num => num < 0.1? num * 10: num);
+            let y = Math.trunc(random[0] * this.field.height);
+            let x = Math.trunc(random[1] * this.field.width);
             let food = this.arrField[y][x];
             if (!this.snake.includes(food)) {
                 food.isFood = true;
