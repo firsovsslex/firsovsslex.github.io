@@ -1,0 +1,49 @@
+body, html{
+    height: 100%;
+}
+
+body{
+    margin: 0;
+    font-family: Helvetica;
+}
+
+.wrapper{
+    width: 100%;
+    height: 100%;
+}
+.container{
+    width: 800px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#field{
+    width: 600px;
+    height: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+}
+.klet{
+    width: 20px;
+    height: 20px;
+}
+.lose{
+    position: absolute;
+    background-color: red;
+    border-radius: 25%;
+    font-size: 60px;
+    padding: 5px 10px;
+}
+
+.restart{
+    padding: 5px 10px;
+    font-size: 45px;
+    margin: 20px auto;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
