@@ -119,7 +119,7 @@ function createEvents(){
         if(!klet.classList.contains('klet')) return;
         if(klet.activate) return;
         if(field.firstClick){
-            field.start = Array.from(document.querySelectorAll('[name="Kto"]')).find(elem => elem.checked).value === 'X'? true: false;
+            field.start = Array.from(document.querySelectorAll('[name="Kto"]')).find(elem => elem.checked).value === 'X';
             field.firstClick = false;
         }
         field.clickKlet(klet);
