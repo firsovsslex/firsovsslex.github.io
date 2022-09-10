@@ -129,6 +129,8 @@ function Start(){
                 'img/blocks/red.png',
                 'img/blocks/green.png',
                 'img/blocks/purple.png'];
+    
+    preLoad(colors);
 
     class Figure{
         constructor(type){
@@ -502,6 +504,13 @@ function Start(){
     function keyUp(e){
         if(e.key !== 'ArrowDown') return;
         pole.pressdown = false;
+    }
+    
+    function preLoad(urls){
+        for(let url of urls){
+            let image = new Image();
+            image.src = url.split`/`.filter(path => path !== 'blocks').join`/`;
+        }
     }
 
 }
