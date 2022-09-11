@@ -507,9 +507,8 @@ function Start(){
     }
     
     function preLoad(urls){
-        for(let url of urls){
-            let image = new Image();
-            image.src = url.split`/`.filter(path => path !== 'blocks').join`/`;
+        for(let url of urls){          
+            [url.split`/`.filter(path => path !== 'blocks').join`/`, url].forEach(url => new Image().src = url);
         }
     }
 
