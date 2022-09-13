@@ -373,7 +373,7 @@ function Start() {
 
                 pole.linesCleared += lineIndexes.length;
 
-                updateScores();
+                updateScores(lineIndexes, pole);
 
                 let event = new Event("clearField");
                 pole.isClearing = false;
@@ -382,31 +382,30 @@ function Start() {
         }
     }
     
-    function updateScores(){
-        if (pole.linesCleared >= pole.max) {
-            pole.level += 1;
-            level.textContent = "Level " + pole.level;
+    function updateScores(lineIndexes, {linesCleared, max, level: plevel, hardMode, currentLevel, color, interval, maxInterval, levels, scores}){
+        if (linesCleared >= max) {
+            plevel += 1;
+            level.textContent = "Level " + plevel;
             let x = 1;
-            if (pole.level >= pole.hardMode) {
+            if (plevel >= hardMode) {
                 x = 1.5;
             }
 
-            let levels = [5, 10, 15];
+            let levelDiff = [5, 10, 15];
 
-            if(pole.level === levels[pole.currentLevel]){
-                pole.currentLevel++;
-                level.classList.add(pole.color[pole.currentLevel]);
+            if(plevel === levelDiff[currentLevel]){
+                currentLevel++;
+                level.classList.add(color[currentLevel]);
             }
 
-            (pole.interval -= (pole.maxInterval * x) / pole.levels),
-                (pole.linesCleared -= pole.max);
-            pole.max += 2;
+            (interval -= (maxInterval * x) / levels),
+                (linesCleared -= max);
+            max += 2;
         }
 
         let resc = (
             +score.textContent +
-            +pole.scores[lineIndexes.length - 1] * pole.level
-        ).toString();
+            +scores[lineIndexes.length - 1] * plevel).toString();
         score.innerHTML = "0".repeat(7 - resc.length) + resc;
 
         if (+localStorage.getItem("record") < +resc) {
