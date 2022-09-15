@@ -29,6 +29,10 @@ function addElements(div, p, level) {
     
     // start.style.left = document.documentElement.clientWidth / 2 - start.offsetWidth / 2 + "px";
     // start.style.top = document.documentElement.clientHeight / 2 - start.offsetHeight / 2 + "px";   
+    
+    document.addEventListener('focus', function(e){
+        e.preventDefault();
+    }, true);
 
     div.classList.add("next");
 
@@ -382,30 +386,30 @@ function Start() {
         }
     }
     
-    function updateScores(lineIndexes, {linesCleared, max, level: plevel, hardMode, currentLevel, color, interval, maxInterval, levels, scores}){
-        if (linesCleared >= max) {
-            plevel += 1;
-            level.textContent = "Level " + plevel;
+    function updateScores(lineIndexes, {max, hardMode, color, maxInterval, levels, scores}){
+        if (pole.linesCleared >= max) {
+            pole.level += 1;
+            level.textContent = "Level " + pole.level;
             let x = 1;
-            if (plevel >= hardMode) {
+            if (pole.level >= hardMode) {
                 x = 1.5;
             }
 
             let levelDiff = [5, 10, 15];
 
-            if(plevel === levelDiff[currentLevel]){
-                currentLevel++;
-                level.classList.add(color[currentLevel]);
+            if(pole.level === levelDiff[pole.currentLevel]){
+                pole.currentLevel++;
+                level.classList.add(color[pole.currentLevel]);
             }
 
-            (interval -= (maxInterval * x) / levels),
-                (linesCleared -= max);
+            (pole.interval -= (maxInterval * x) / levels),
+                (pole.linesCleared -= max);
             max += 1;
         }
 
         let resc = (
             +score.textContent +
-            +scores[lineIndexes.length - 1] * plevel).toString();
+            +scores[lineIndexes.length - 1] * pole.level).toString();
         score.innerHTML = "0".repeat(7 - resc.length) + resc;
 
         if (+localStorage.getItem("record") < +resc) {
