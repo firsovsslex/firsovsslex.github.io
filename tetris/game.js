@@ -400,7 +400,7 @@ function Start() {
 
             (interval -= (maxInterval * x) / levels),
                 (linesCleared -= max);
-            max += 2;
+            max += 1;
         }
 
         let resc = (
