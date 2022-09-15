@@ -339,7 +339,7 @@ function Start() {
                         .filter((_, i) => lineIndexes.includes(i))
                         .flat();
                     let chet = true;
-                    setInterval(function animate() {
+                    let animate = setInterval(function() {
                         if (chet) {
                             allblocks.forEach((elem) => {
                                 elem.prevSrc = elem.style.backgroundImage;
@@ -386,8 +386,8 @@ function Start() {
         }
     }
     
-    function updateScores(lineIndexes, {max, hardMode, color, maxInterval, levels, scores}){
-        if (pole.linesCleared >= max) {
+    function updateScores(lineIndexes, {hardMode, color, maxInterval, levels, scores}){
+        if (pole.linesCleared >= pole.max) {
             pole.level += 1;
             level.textContent = "Level " + pole.level;
             let x = 1;
@@ -403,8 +403,8 @@ function Start() {
             }
 
             (pole.interval -= (maxInterval * x) / levels),
-                (pole.linesCleared -= max);
-            max += 1;
+                (pole.linesCleared -= pole.max);
+            pole.max += 1;
         }
 
         let resc = (
