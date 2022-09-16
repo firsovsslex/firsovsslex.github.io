@@ -3,9 +3,9 @@ score = document.querySelector("#score"),
 start = document.querySelector("#play"),
 cont = document.querySelector(".start"),
 recordcont = document.querySelector(".records"),
-record = document.querySelector("#record"),
+record = document.querySelector("#record");
 
-div = document.createElement("div"),
+let div = document.createElement("div"),
 p = document.createElement("p"),
 level = document.createElement("div");
 
@@ -18,8 +18,9 @@ document.addEventListener("selectstart", (e) => e.preventDefault());
 addElements(div, p, level);
 
 let colors = ["cyan", "blue", "orange", "yellow", "red", "green", "purple"];
-
 preLoad(colors);
+
+
 
 start.onclick = function() {
     Start();
@@ -29,10 +30,6 @@ function addElements(div, p, level) {
     
     // start.style.left = document.documentElement.clientWidth / 2 - start.offsetWidth / 2 + "px";
     // start.style.top = document.documentElement.clientHeight / 2 - start.offsetHeight / 2 + "px";   
-    
-    document.addEventListener('focus', function(e){
-        e.preventDefault();
-    }, true);
 
     div.classList.add("next");
 
@@ -62,6 +59,9 @@ function preLoad(urls){
 }
 
 function Start() {
+
+    let pause = createFieldElement('div', 'pause', 'Pause');
+
     setElements();
 
     function setElements() {
@@ -77,11 +77,17 @@ function Start() {
 
         level.style.top = coords.top + "px";
         level.style.left = coords.left - level.offsetWidth - 25 + "px";
+
+        pause.style.left = field.offsetWidth / 2 - pause.offsetWidth / 2 + "px";
+        pause.style.top = field.offsetHeight / 2 - pause.offsetHeight / 2 + "px";
+        pause.hidden = true;
     }
 
     let pole = {
         width: 10,
         height: 20,
+        timer: null,
+        isClearing: false,
         linesCleared: 0,
         level: 1,
         levels: 20,
@@ -93,10 +99,10 @@ function Start() {
         max: 4,
         hardMode: 15,
         gameover: false,
-        isClearing: false,
         animInterval: 200,
         animateCount: 3,
         pressdown: false,
+        paused: false
     };
 
     level.classList.add(pole.color[pole.currentLevel]);
@@ -303,12 +309,12 @@ function Start() {
     }
 
     function startUpdate() {
-        field.addEventListener("clearField", () => update());
+        field.addEventListener("Continue", () => update());
         setTimeout(update, pole.interval);
     }
 
     function update(fromEvent) {
-        if ((pole.pressdown && !fromEvent) || pole.isClearing || pole.gameover) return;
+        if ((pole.pressdown && !fromEvent) || pole.gameover || pole.paused) return;
 
         if (!currentFigure.stopped) {
             currentFigure.moveFigure(fromEvent || "down");
@@ -320,7 +326,7 @@ function Start() {
         }
 
         if (!fromEvent) {
-            setTimeout(update, pole.interval);
+            pole.timer = setTimeout(update, pole.interval);
         }
     }
 
@@ -330,8 +336,8 @@ function Start() {
             line.every((block) => block.isBlocked) ? lineIndexes.push(i) : 0
         );
         if (lineIndexes.length) {
+            pole.paused = true;
             pole.isClearing = true;
-
             (async function () {
                 await new Promise((resolve) => {
                     let animCount = 0;
@@ -379,7 +385,8 @@ function Start() {
 
                 updateScores(lineIndexes, pole);
 
-                let event = new Event("clearField");
+                let event = new Event("Continue");
+                pole.paused = false;
                 pole.isClearing = false;
                 field.dispatchEvent(event);
             }());
@@ -442,13 +449,25 @@ function Start() {
             return restart;
         }
 
-        function createFieldElement(type, name, text) {
-            let elem = document.createElement(type);
-            elem.classList.add(name);
-            elem.textContent = text;
-            field.append(elem);
-            return elem;
+    }
+
+    function pauseGame(){
+        pause.hidden = !pause.hidden;
+        pole.paused = !pole.paused;
+        if(!pole.paused){
+            pole.timer = setTimeout(() => field.dispatchEvent(new Event("Continue")), pole.interval);
+            return;
         }
+        clearTimeout(pole.timer);
+        
+    }
+
+    function createFieldElement(type, className, text) {
+        let elem = document.createElement(type);
+        elem.classList.add(className);
+        elem.textContent = text;
+        field.append(elem);
+        return elem;
     }
 
     function generateField(width, height) {
@@ -475,11 +494,15 @@ function Start() {
     }
 
     function keyDown(e) {
+        if(e.code === 'Space' && !e.repeat && !pole.isClearing){
+            pauseGame();
+            return;
+        }
         if (!buttons.includes(e.key)) return;
         let way = e.key.slice(5);
         if (way === "down" && !e.repeat) pole.pressdown = true;
 
-        if (!pole.isClearing) {
+        if (!pole.paused) {
             update(way.toLowerCase());
         }
     }
