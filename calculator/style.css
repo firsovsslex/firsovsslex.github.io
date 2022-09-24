@@ -26,8 +26,8 @@ h1{
 }
 
 .calculator{
-    width: 50%;
-    height: 60%;
+    width: 400px;
+    height: 475px;
 }
 
 #calchead{
@@ -48,10 +48,6 @@ h1{
     color: black;
     background-color: rgb(142, 255, 138);
     border-radius: 25px;
-}
-
-.small{
-    
 }
 
 #calcbody{
