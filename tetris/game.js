@@ -13,8 +13,6 @@ let coords = field.getBoundingClientRect();
 
 if (!localStorage.getItem("record")) localStorage.setItem("record", "0");
 
-document.addEventListener("selectstart", (e) => e.preventDefault());
-
 addElements(div, p, level);
 
 let colors = ["cyan", "blue", "orange", "yellow", "red", "green", "purple"];
@@ -506,7 +504,7 @@ function Start() {
             update(way.toLowerCase());
         }
     }
-
+    
     function keyUp(e) {
         if (e.key !== "ArrowDown") return;
         pole.pressdown = false;
