@@ -290,7 +290,7 @@ function start(){
     }
 
     function touchup(e){
-        if(Date.now() - config.timeDelay > 500 && (Math.abs(e.clientX - config.touchPos[0]) < 70 && Math.abs(e.clientY - config.touchPos[1]) < 70)) setPause();
+        if(Date.now() - config.timeDelay > 500 && (Math.abs(e.clientX - config.touchPos[0]) < 15 && Math.abs(e.clientY - config.touchPos[1]) < 15)) setPause();
     }
 
     function space(e){
