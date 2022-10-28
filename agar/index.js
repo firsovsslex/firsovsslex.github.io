@@ -155,8 +155,8 @@ function start(){
         }
     
         toMouseXY(e){
-    
-            if(pause || gameover) return;
+            
+            if(pause || gameover || !e.isPrimary) return;
     
             this.x = e.clientX;
             this.y = e.clientY;
@@ -225,8 +225,8 @@ function start(){
             document.removeEventListener('keydown', space);
         }
         else{
-            canvas.removeEventListener('pointerdown', touchdown, true);
-            canvas.removeEventListener('pointerup', touchup, true);
+            document.body.removeEventListener('pointerdown', touchdown);
+            document.body.removeEventListener('pointerup', touchup);
         }
 
         player.delete();
@@ -280,8 +280,8 @@ function start(){
         document.addEventListener('keydown', space);
     }
     else{
-        canvas.addEventListener('pointerdown', touchdown, true);
-        canvas.addEventListener('pointerup', touchup, true);
+        document.body.addEventListener('pointerdown', touchdown);
+        document.body.addEventListener('pointerup', touchup);
     }
 
     function touchdown(e){
@@ -290,7 +290,7 @@ function start(){
     }
 
     function touchup(e){
-        if(Date.now() - config.timeDelay > 500 && (Math.abs(e.clientX - config.touchPos[0]) < 15 && Math.abs(e.clientY - config.touchPos[1]) < 15)) setPause();
+        if(Date.now() - config.timeDelay > 500 && (Math.abs(e.clientX - config.touchPos[0]) < 20 && Math.abs(e.clientY - config.touchPos[1]) < 20)) setPause();
     }
 
     function space(e){
@@ -331,7 +331,7 @@ if(!navigator.userAgentData.mobile){
         } 
     });
 }
-else canvas.addEventListener('click', restart, true);
+else document.body.addEventListener('pointerdown', restart);
 
 function restart(){
     if(gameover){
