@@ -1,0 +1,23 @@
+
+html, body{
+    height: 100%;
+    user-select: none;
+}
+
+body{
+    margin: 0;
+    /* overflow: hidden; */
+    font-family: Helvetica;
+}
+
+#canvas{
+    background-color: black;
+    touch-action: none;
+}
+
+#points, #pause{
+    color: white;
+    font-size: 60px;
+    margin: 0;
+    position: absolute;
+}
