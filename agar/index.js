@@ -5,6 +5,8 @@ let ctx = canvas.getContext("2d");
 canvas.height = document.body.clientHeight - 3.33;
 canvas.width = document.body.clientWidth;
 
+canvas.oncontextmenu = () => false; 
+
 let gameover = false;
 
 let pauseText = document.createElement('p');
@@ -29,6 +31,22 @@ function toCenter(elem){
 
 }
 
+let config = {
+    mainCircle: { 
+        radius: 10,
+        color: '#ffffff',
+    },
+    maxWidth: 2560,
+    maxHeight: 1440,
+    circles: [],
+    spawnTimeout: false
+}
+
+const WH = (screen.width / screen.height) / (config.maxWidth / config.maxHeight);
+
+config.circlesSpeed = WH * 10;
+config.spawnInterval = 250 / WH;
+config.mainCircle.spawnPosition = [canvas.width / 2, canvas.height / 2]; 
 
 function start(){
     
@@ -36,19 +54,6 @@ function start(){
     
     let pause = false;
     let points = 0;
-    
-    let config = {
-        mainCircle: { 
-            radius: 10,
-            color: '#ffffff',
-        },
-        circlesSpeed: 10,
-        spawnInterval: 150,
-        circles: [],
-        spawnTimeout: false
-    }
-    
-    config.mainCircle.spawnPosition = [canvas.width / 2, canvas.height / 2]; 
     
     function getRandomSpawnPosition(){
         let x, y;
@@ -331,6 +336,7 @@ else canvas.addEventListener('click', restart, true);
 function restart(){
     if(gameover){
         gameover = false;
+        config.circles.length = 0;
         start();
         endText.hidden = true;
     }
