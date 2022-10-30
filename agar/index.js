@@ -2,7 +2,7 @@
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext("2d");
 
-canvas.height = document.body.clientHeight - 3.33;
+canvas.height = document.body.clientHeight;
 canvas.width = document.body.clientWidth;
 
 canvas.oncontextmenu = () => false; 
@@ -38,14 +38,15 @@ let config = {
     },
     maxWidth: 2560,
     maxHeight: 1440,
-    circles: [],
-    spawnTimeout: false
+    circles: new Set(),
+    spawnTimeout: false,
+    focusWindow: true
 }
 
 const WH = (screen.width / screen.height) / (config.maxWidth / config.maxHeight);
 
-config.circlesSpeed = WH * 10;
-config.spawnInterval = 250 / WH;
+config.circlesSpeed = WH * 100;
+config.spawnInterval = 2500 / WH;
 config.mainCircle.spawnPosition = [canvas.width / 2, canvas.height / 2]; 
 
 function start(){
@@ -55,16 +56,16 @@ function start(){
     let pause = false;
     let points = 0;
     
-    function getRandomSpawnPosition(){
+    function getRandomSpawnPosition(radius){
         let x, y;
     
         if(Math.round(getRandomNumber())){
             x = Math.round(getRandomNumber() * canvas.width);
-            y = Math.round(getRandomNumber())? 0: canvas.height;
+            y = Math.round(getRandomNumber())? -radius: canvas.height + radius;
         }
     
         else{
-            x = Math.round(getRandomNumber())? 0: canvas.width;
+            x = Math.round(getRandomNumber())? -radius: canvas.width + radius;
             y = Math.round(getRandomNumber() * canvas.height);
         }
     
@@ -134,7 +135,7 @@ function start(){
         }
 
         delete(){
-            config.circles = config.circles.filter(circle => circle !== this);
+            config.circles.delete(this);
         }
 
         checkColission(player){
@@ -162,6 +163,7 @@ function start(){
             this.y = e.clientY;
                      
             config.circles.forEach(circle => cmpcolission(circle.checkColission(this), this));
+            
         }
     
         render(){
@@ -220,6 +222,7 @@ function start(){
         gameover = true;
 
         canvas.removeEventListener('pointermove', player.toMouseXY);
+        document.removeEventListener('visibilitychange', changeW);
 
         if(!navigator.userAgentData.mobile){
             document.removeEventListener('keydown', space);
@@ -255,11 +258,13 @@ function start(){
     
     function spawnCircles(){
     
-        if(pause || gameover) return;
-        
-        let circle = new Circle(...getRandomSpawnPosition(), getRandomRadius(player), config.circlesSpeed, getRandomColor());
+        if(pause || gameover || !config.focusWindow) return;
+
+    
+        let radius = getRandomRadius(player);
+        let circle = new Circle(...getRandomSpawnPosition(radius), radius, config.circlesSpeed, getRandomColor());
         circle.spawn();
-        config.circles.push(circle);
+        config.circles.add(circle);
 
         setTimeout(() => config.spawnTimeout = false, config.spawnInterval);
         setTimeout(spawnCircles, config.spawnInterval);
@@ -282,6 +287,13 @@ function start(){
     else{
         document.body.addEventListener('pointerdown', touchdown);
         document.body.addEventListener('pointerup', touchup);
+    }
+
+    document.addEventListener('visibilitychange', changeW);
+
+    function changeW(){
+        config.focusWindow = !config.focusWindow; 
+        if(config.focusWindow) spawnCircles();
     }
 
     function touchdown(e){
@@ -318,6 +330,7 @@ function start(){
         pauseText.hidden = !pauseText.hidden;     
     }
 
+
     
     
 }
@@ -336,11 +349,12 @@ else document.body.addEventListener('pointerdown', restart);
 function restart(){
     if(gameover){
         gameover = false;
-        config.circles.length = 0;
+        config.circles.clear();
         start();
         endText.hidden = true;
     }
 }
+
 
 
 
