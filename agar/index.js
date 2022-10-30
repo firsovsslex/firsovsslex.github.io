@@ -45,8 +45,8 @@ let config = {
 
 const WH = (screen.width / screen.height) / (config.maxWidth / config.maxHeight);
 
-config.circlesSpeed = WH * 100;
-config.spawnInterval = 2500 / WH;
+config.circlesSpeed = WH * 10;
+config.spawnInterval = 250 / WH;
 config.mainCircle.spawnPosition = [canvas.width / 2, canvas.height / 2]; 
 
 function start(){
