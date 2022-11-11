@@ -1,0 +1,4 @@
+Header set Acess-Control-Allow-Origin '*'
+Header set Access-Control-Allow-Methods PUT,PATCH,DELETE
+Header set Access-Control-Allow-Headers API-Key,Content-Type,If-Modified-Since,Cache-Control
+Header set Access-Control-Max-Age 86400
