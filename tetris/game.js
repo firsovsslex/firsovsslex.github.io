@@ -50,9 +50,9 @@ function addElements(div, p, level) {
 }
 
 function preLoad(urls){
-    new Image().src = "img/blocks/white.png";
+    document.createElement('img').src = "img/blocks/white.png";
     for(let url of urls){          
-        [`img/${url}.png`, `img/blocks/${url}.png`].forEach(url => new Image().src = url);
+        [`img/${url}.png`, `img/blocks/${url}.png`].forEach(url => document.createElement('img').src = url);
     }
 }
 
