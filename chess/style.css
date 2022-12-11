@@ -1,0 +1,164 @@
+
+html, body, .wrapper, .container{
+    height: 100%;
+}
+
+body{
+    margin: 0;
+}
+
+.wrapper{
+    display: flex;
+    justify-content: center;
+    font-family: Arial;
+}
+
+.container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tile{
+    width: 90px;
+    height: 90px;
+    display: inline-block;
+}
+
+.selected{
+    background-image: radial-gradient(rgba(20,85,30,0.5) 19%, rgba(0,0,0,0) 20%);
+}
+
+
+.tileB{
+    background-color: #b58863;
+}
+
+.tileW{
+    background-color: #f0d9b5;
+}
+
+#field{
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.row{
+    height: 90px;
+}
+
+#figures{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.Fcount{
+    height: 60px;
+    width: 60px;
+}
+
+.select-figure{
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgb(17, 0, 255);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 1;
+}
+
+.pick{
+    width: 90px;
+    height: 90px;
+    background-size: cover;
+    background-color: #df6500;
+    border: 2px solid black;
+    transition: .2s;
+    margin: 1px;
+}
+
+.pick:hover{
+    background-color: #ff943d;
+}
+
+.figure{
+    width: 90px;
+    height: 90px;
+    background-size: cover;
+    z-index: 1;
+}
+
+
+.chess-data{
+    height: 720px;
+    width: 200px;
+    font-size: 40px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+    margin-left: 50px;
+
+}
+
+@media (max-height: 762px) {
+    .figure{
+        width: 60px;
+        height: 60px;
+    }
+
+    .chess-data{
+        height: 400px;
+        font-size: 20px;
+    }
+
+    .pick{
+        height: 60px;
+        width: 60px;
+    }
+
+    .row{
+        height: 60px;
+    }
+
+    .tile{
+        height: 60px;
+        width: 60px;
+    }
+}
+
+@media (max-width: 750px) {
+    .figure{
+        width: 30px;
+        height: 30px;
+    }
+
+    .chess-data{
+        height: 240px;
+        font-size: 20px;
+    }
+
+    .pick{
+        height: 30px;
+        width: 30px;
+    }
+
+    .row{
+        height: 30px;
+    }
+
+    .tile{
+        height: 30px;
+        width: 30px;
+    }
+}
+
+
+
