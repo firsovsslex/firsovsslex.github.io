@@ -1,7 +1,8 @@
 
 
-let figureCounter1 = document.querySelector('.chess-data__figures_my');
-let figureCounter2 = document.querySelector('.chess-data__figures');
+let figureCounter1 = document.querySelector('#data-figures1');
+let figureCounter2 = document.querySelector('#data-figures2');
+let chesslog = document.querySelector('.chess-log');
 
 let generation = [['Rb','Hb','Bb','Qb','Kb','Bb','Hb','Rb'], ['Pb','Pb','Pb','Pb','Pb','Pb','Pb','Pb'], '00000000', '00000000', '00000000', '00000000', ['Pw','Pw','Pw','Pw','Pw','Pw','Pw','Pw'], ['Rw','Hw','Bw','Qw','Kw','Bw','Hw','Rw']];
 
@@ -69,6 +70,11 @@ class Figure{
 
         this.prevTile = this.tile;
 
+        let figure = this.tile.children[0];
+
+        if(figure.style.transform) figure.style.transform = '';
+        
+        tile.append(this.tile.children[0]);
         this.tile = tile;
         this.tile.figure = this;
 
@@ -82,21 +88,31 @@ class Figure{
     
                 case 'passMove': {
                     this.passP.beat();
-                    this.passP.delete();
                     break;
                 }
 
                 case 'castlingL':{
-                    field.figures.find(elem => elem.y === this.y && elem.x === 0).figure.move(field.tiles.find(elem => elem.y === this.y && elem.x === this.x + 1));
+
+                    castlingRook(field.figures.find(elem => elem.y === this.y && elem.x === 0).figure, field.tiles.find(elem => elem.y === this.y && elem.x === this.x + 1));                
                     break;
                 }
 
                 case 'castlingR':{
-                    field.figures.find(elem => elem.y === this.y && elem.x === 7).figure.move(field.tiles.find(elem => elem.y === this.y && elem.x === this.x - 1));
+
+                    castlingRook(field.figures.find(elem => elem.y === this.y && elem.x === 7).figure, field.tiles.find(elem => elem.y === this.y && elem.x === this.x - 1));
+                    
                 }
     
             }
 
+        }
+
+        function castlingRook(rook, next){
+            field.animateFigure(next, rook)
+            .then(_ => {
+                rook.move(next);
+                field.checkKings();
+            });
         }
 
         field.figures = field.getAllFigures();
@@ -121,15 +137,15 @@ class Figure{
         }
         else figureCounter2.append(img);
 
+        this.tile.children[0].remove();
+
         this.delete();
-        
     }
 
     delete(){
         this.tile.image = null;
         this.tile.figure = null;
         this.specialMoves.forEach(move => move.special = '');
-        changeImage(this.tile.children[0], '');
     }
 
     setFigure(e){
@@ -519,8 +535,21 @@ class Field{
 
         this.Field.oncontextmenu = () => false;
 
-        this.pawnSet = null;
+        this.pawnSet = false;
+        this.animate = false
         this.prevFigure = null;
+        this.countMove = 1;
+        this.chered = 0;
+
+        this.coordsX = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; 
+        this.coordsY = ['1', '2', '3', '4', '5', '6', '7', '8']; 
+        this.figureIcons = {H: '♘',
+                            B: '♗',
+                            R: '♖',
+                            Q: '♕',
+                            K: '♔'}
+
+        chesslog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
   
     }
 
@@ -528,8 +557,14 @@ class Field{
 
         let white = true;
 
+        let coordsX = createElement('div', 'coordsX');
+        let coordsY = createElement('div', 'coordsY');
+
         let rows = [];
         for(let i = 0; i < this.height; i++){
+
+            coordsX.insertAdjacentHTML('beforeend',`<p>${this.coordsX[i]}</p>`);
+            coordsY.insertAdjacentHTML('beforeend',`<p>${this.coordsY[i]}</p>`);
 
             let row = createElement('div', 'row');
             for(let j = 0; j < this.width; j++){
@@ -538,9 +573,6 @@ class Field{
 
                 let tile = createElement('div', 'tile');
                 tile.classList.add(color);
-
-                let figure = createElement('div', 'figure');            
-                tile.append(figure);
 
                 tile.x = j;
                 tile.y = i;
@@ -557,7 +589,18 @@ class Field{
 
         this.Field.append(...rows);
 
+        coordsX.style.width = this.Field.offsetWidth + 'px';
+        coordsY.style.height= this.Field.offsetHeight + 'px';
+
+        this.Field.before(coordsX);
+        this.Field.after(coordsX.cloneNode(true));
+
+        this.Field.parentElement.before(coordsY);
+        this.Field.parentElement.after(coordsY.cloneNode(true));
+
         this.tiles = Array.from(this.Field.querySelectorAll('.tile'));
+
+        
     }
 
 
@@ -576,6 +619,9 @@ class Field{
                 }
 
                 let [type, color] = line[j];    
+
+                let figure = createElement('div', 'figure');            
+                tile.append(figure);
                 
                 tile.figure = new Figure(type, tile, color === 'w');    
 
@@ -602,22 +648,34 @@ class Field{
 
     click(e){
 
-        if(this.pawnSet) return;
+        if(this.pawnSet || this.animate) return;
 
         let tile = e.target.closest('.tile');
-
         if(!tile) return;
 
         this.eventObject = e;
-
         if(tile.figure !== this.figureSelected){
        
             if(tile.selected){
-                this.setPosition(tile);          
+
+                this.clearSelected();
+
+                if(this.figureSelected.type === 'K'){
+                    this.figureSelected.tile.style.backgroundColor = '';
+                }
+
+                this.writeMove(tile, this.figureSelected);
+                
+                this.animateFigure(tile, this.figureSelected)
+                .then(_ => {
+                    this.setPosition(tile);  
+                })   
+                return;             
             }
 
-            if(this.figureSelected){
+            if(this.figureSelected) {
                 this.clearSelected();
+                this.figureSelected = null;
             }
 
             if(tile.figure && tile.figure.color === this.currentPlay){
@@ -625,14 +683,16 @@ class Field{
                 this.figureSelected = tile.figure;
                 this.figureSelected.select();
             }
-            else this.figureSelected = null;
+            
+            
+
+            
           
         }
         
     }
 
     setPosition(tile){
-        this.clearSelected();
                 
         this.prevFigure = this.figureSelected;
         this.figureSelected.move(tile);            
@@ -640,7 +700,6 @@ class Field{
         this.checkKings();
         this.currentPlay = !this.currentPlay;   
     
-        return;
     }
 
     checkKings(){
@@ -675,9 +734,32 @@ class Field{
         });
     }
 
+    animateFigure(next, figure){
+        return new Promise(resolve => { 
+            this.animate = true;
+
+            let offsetX =  next.x - figure.x;
+            let offsetY = next.y - figure.y;
+
+            let anim = figure.tile.children[0];
+            anim.style.zIndex = 10;
+            anim.addEventListener('transitionend', animate.bind(this));
+
+            function animate(){
+                anim.style.zIndex = 0;
+                this.animate = false;
+                resolve();
+            }
+
+            anim.style.transform = `translate(${offsetX * 90}px, ${offsetY * 90}px)`;
+
+        });
+        
+    }
+
     drag(event){
 
-        if(this.pawnSet) return;
+        if(this.pawnSet || this.animate) return;
 
         let elem = event.target;
         if(!elem.closest('.tile')) return;
@@ -688,23 +770,23 @@ class Field{
 
         if(!elem.style.position) elem.style.position = 'absolute';
 
-        let offsetX = elem.getBoundingClientRect().width;
-        let offsetY = elem.getBoundingClientRect().height;
-
-        moveTo(event.pageX, event.pageY)
-
         function moveTo(pageX, pageY){
-            elem.style.left = pageX - offsetX / 2 + 'px';
-            elem.style.top = pageY - offsetY / 2 + 'px';
+            if(pageX + elem.offsetWidth / 2 < window.innerWidth && pageX - elem.offsetWidth / 2 > 0){
+                elem.style.left = pageX - elem.offsetWidth / 2 + 'px';
+            }   
+            if(pageY + elem.offsetHeight / 2 < window.innerHeight && pageY - elem.offsetHeight / 2 > 0){
+                elem.style.top = pageY - elem.offsetHeight / 2 + 'px';
+            }  
         }
 
         mouseMove = mouseMove.bind(this);
         reset = reset.bind(this);
 
-        this.Field.addEventListener('pointermove', mouseMove);
-        this.Field.addEventListener('pointerup', reset);
+        document.addEventListener('pointermove', mouseMove);
+        document.addEventListener('pointerup', reset);
 
         let currentTile = null;
+
 
         function mouseMove(e){
 
@@ -712,13 +794,13 @@ class Field{
 
             elem.hidden = true;
 
-            let pos = document.elementFromPoint(e.clientX, e.clientY).closest('.tile');
+            let pos = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
 
             elem.hidden = false;
 
             if(!pos) return;
-            if(pos === currentTile || pos.children[0] === elem) return;
-            if(!pos.selected) return;
+            if(pos === currentTile) return;
+            if(pos === elem.parentElement) return;
 
             if(currentTile){
                 if(currentTile.figure){
@@ -729,7 +811,8 @@ class Field{
             } 
 
             currentTile = pos;
-            
+
+            if(!pos.selected) return;
 
             if(currentTile.figure) currentTile.figure.tileColor = currentTile.style.backgroundColor;
 
@@ -742,21 +825,43 @@ class Field{
 
             this.eventObject = e;
 
-            this.Field.removeEventListener('pointermove', mouseMove);
-            this.Field.removeEventListener('pointerup', reset);
+            document.removeEventListener('pointermove', mouseMove);
+            document.removeEventListener('pointerup', reset);
 
             elem.style.cssText = '';
-            if(currentTile) changeColor(currentTile, '');
+            if(currentTile && currentTile !== elem.parentElement) changeColor(currentTile, '');
 
-            let tile = document.elementFromPoint(e.clientX, e.clientY).closest('.tile');
+            let tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
             if(tile && tile.selected){
+                this.clearSelected();
+                this.writeMove(tile, this.figureSelected);
                 this.setPosition(tile);
             }
           
             else changeImage(elem, `url(${elem.parentElement.image})`);
 
+            
+
         }
 
+    }
+
+    writeMove(next, figure){
+        this.chered++;
+        if(this.chered === 3){
+            this.chered = 1;
+            this.countMove++;
+
+            if(this.countMove > 4){
+                chesslog.style.height = +chesslog.style.height.slice(0, -2) + 37.5 + 'px';
+                chesslog.style.gridTemplateRows += ' 1fr';
+            }
+            chesslog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
+        }
+
+        let f = figure.type !== 'P'? this.figureIcons[figure.type]: '';
+
+        chesslog.insertAdjacentHTML('beforeend', `<div class="move"><p>${f+(next.figure? 'x': '')+this.coordsX[next.x]+this.coordsY[next.y]}</p></div>`);
     }
 
     updateFigures(){
@@ -834,9 +939,10 @@ function changeImage(elem, url){
 function createElement(tag, classH, innerText, id){
     let elem = document.createElement(tag);
 
-    if(classH) elem.classList.add(classH);
+    if(classH) elem.className = classH;
     if(innerText) elem.textContent = innerText;
     if(id) elem.id = id;
 
     return elem;
 }
+
