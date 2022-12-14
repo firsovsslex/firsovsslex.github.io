@@ -13,23 +13,47 @@
         <div class="container">
 
             
-            <div class="chess-log">
-
+            <div class="containerX">
+                 <div id="field"></div>
             </div>
-            
-            <div id="field"></div>
 
             <div class="chess-data">
-                <div class="chess-data__name">Имя: оН</div>
-                <div class="chess-data__figures"></div>
-                <div class="chess-data__timer">00:00:00</div>
-                <div class="chess-data__timer chess-data__timer_my">00:00:00</div>
-                <div class="chess-data__figures chess-data__figures_my"></div>          
-                <div class="chess-data__name chess-data__name_my">Имя: Sasha</div>
-            </div>
 
+                <div class="chess-data__figures" id="data-figures2"></div>
+
+                <div class="timer-tools">
+                    <div><p class="timer" id="timer2">00:00:00</p></div>
+
+                    <div class="border">
+                        <div class="chess-tools">
+                        
+                            <div class="chess-tools__name"><p id="name2">Player2</p></div>
+
+                            <div class="log-container">
+                                <div class="chess-log" style="grid-template-rows: 1fr 1fr 1fr 1fr; height: 150px;"></div>  
+                            </div>
+                           
+                                                           
+                            <div class="chess-tools__buttons">
+                                <button id="move-back"></button>
+                                <button id="draw-request"></button>
+                                <button id="surrender"></button>
+                            </div>
+                            <div class="chess-tools__name"><p id="name1">Player1</p></div>
+                            
+                        </div>
+                    </div>
             
-            
+        
+                    <div><p class="timer" id="timer1">00:00:00</p></div>
+
+                </div>
+
+                
+                <div class="chess-data__figures" id="data-figures1"></div>  
+
+            </div>
+   
             
         </div>
     </div>
