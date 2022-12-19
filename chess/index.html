@@ -12,6 +12,35 @@
     <div class="wrapper">
         <div class="container">
 
+            <div class="modal">
+                <div class="settings">
+
+                    <div class="settings__name">
+                        <p>Введите имя1: </p><input maxlength="10" autocomplete="off" id="input-name1" type="text">
+                    </div>
+                    
+
+                    <div class="settings__name">
+                        <p>Введите имя2: </p><input maxlength="10" autocomplete="off" id="input-name2" type="text">          
+                    </div>
+                    
+                    
+                    <div class="settings__time">
+                        <p>Введите время: </p>
+                        
+                        <input placeholder="00" autocomplete="off" id="hours" type="text">
+                        <p>:</p>
+                        <input placeholder="00" autocomplete="off" id="minutes" type="text">
+                        <p>:</p>
+                        <input placeholder="00" autocomplete="off" id="seconds" type="text">
+                               
+                    </div>
+                    
+
+                    <button id="save">Играть</button>
+
+                </div>
+            </div>
             
             <div class="containerX">
                  <div id="field"></div>
@@ -21,31 +50,34 @@
 
                 <div class="chess-data__figures" id="data-figures2"></div>
 
-                <div class="timer-tools">
-                    <div><p class="timer" id="timer2">00:00:00</p></div>
+                <div class="chess-data__tools">
 
-                    <div class="border">
-                        <div class="chess-tools">
+                    <div><p class="chess-data__timer" id="timer2">00:00:00</p></div>
+
+                    <div class="tools__border">
+                        <div class="data">
                         
-                            <div class="chess-tools__name"><p id="name2">Player2</p></div>
+                            <div class="data__name"><p id="name2">Player2</p></div>
 
-                            <div class="log-container">
-                                <div class="chess-log" style="grid-template-rows: 1fr 1fr 1fr 1fr; height: 150px;"></div>  
+                            <div class="data__log">
+                                <div class="chess-log" style="grid-template-rows: 1fr 1fr 1fr 1fr; height: 100px;"></div>  
                             </div>
                            
                                                            
-                            <div class="chess-tools__buttons">
+                            <!-- <div class="data__buttons">
                                 <button id="move-back"></button>
                                 <button id="draw-request"></button>
                                 <button id="surrender"></button>
-                            </div>
-                            <div class="chess-tools__name"><p id="name1">Player1</p></div>
+                            </div> -->
+                            
+                            <div class="data__name"><p id="name1">Player1</p></div>
                             
                         </div>
                     </div>
-            
+    
+                    
         
-                    <div><p class="timer" id="timer1">00:00:00</p></div>
+                    <div><p class="chess-data__timer" id="timer1">00:00:00</p></div>
 
                 </div>
 
