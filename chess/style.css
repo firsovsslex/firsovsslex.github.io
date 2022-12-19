@@ -102,13 +102,14 @@ body{
     margin-left: 50px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    height: 720px;
-    
+    justify-content: space-evenly;   
 }
 
+.chess-data__figures{
+    max-width: 400px;
+}
 
-.chess-tools{
+.data{
     height: 300px;
     width: 400px;
     font-size: 20px;
@@ -120,18 +121,18 @@ body{
     
 }
 
-.chess-tools p{
+.data p{
     margin: 0;
 }
 
-.border{
+.tools__border{
     padding: 15px;
     border-radius: 15px;
     background-color: white;
 }
 
-.log-container{
-    height: 150px;
+.data__log{
+    height: 100px;
     overflow-y: scroll;
 }
 
@@ -171,19 +172,19 @@ body{
     background-color: rgb(0, 255, 98);
 }
 
-.chess-tools__name{
+.data__name{
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.chess-tools__buttons{
+.data__buttons{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
 
-.chess-tools__buttons button{
+.data__buttons button{
     height: 40px;
     width: 60px;
     background-color: #df6500;
@@ -191,12 +192,11 @@ body{
     transition: .3s;
 }
 
-.chess-tools__buttons button:hover{
-
+.data__buttons button:hover{
     background-color: #b58863;
 }
 
-.timer{
+.chess-data__timer{
     height: 50px;
     font-size: 40px;
     font-family: sans-serif;
@@ -206,7 +206,7 @@ body{
     margin: 0;
 }
 
-.timer-tools{
+.chess-data__tools{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -240,7 +240,7 @@ body{
 
 .coordsY{
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
     width: 45px;
@@ -258,57 +258,167 @@ body{
     flex-direction: column;
 }
 
-@media (max-height: 762px) {
-    .figure{
+.endtext{
+    font-size: 40px;
+    font-family: Helvetica;
+    font-weight: bold;
+    padding: 25px;
+    border-radius: 10px;
+    position: absolute;
+}
+
+.mate{
+
+    color: rgb(255, 106, 0);   
+    background-color: rgb(0, 255, 128);
+    
+}
+
+.pat{
+
+    color: rgb(0, 68, 255);
+    background-color: rgb(116, 117, 123);
+}
+
+.modal{
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    background-color: rgb(132, 81, 177);
+    width: 100%;
+    height: 100%;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.settings{
+   display: flex;
+   flex-direction: column;
+   justify-content: space-around;
+   align-items: center;
+   color: white;
+   min-width: 600px;
+   min-height: 400px;
+}
+
+.settings__name{
+    font-size: 25px;
+}
+
+.settings__name p{
+    display: inline;
+}
+
+.settings__time{
+    font-size: 30px;
+    color: white;
+}
+
+.settings__time input{
+    color: white;
+    width: 70px;
+    padding: 5px;
+    background-color: rgb(102, 0, 255);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.settings__time input::placeholder{
+    color: white;
+    text-align: center;
+}
+
+.settings__time p{
+    display: inline;
+    margin: 0 5px 0 5px;
+}
+
+#input-name1, #input-name2{
+    font-size: 20px;
+    margin: 0 10px 0 10px;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(30, 210, 66);
+    font-size: 25px;
+    padding: 15px;
+    color: white;
+
+}
+
+#name1, #name2{
+    font-size: 35px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black, -1px -1px 2px black;
+}
+
+#name1{
+    color: blue;  
+}
+
+#name2{
+    color: red;
+}
+
+#save{
+    padding: 10px 15px;
+    background-color: red;
+    outline: none;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .5s;
+
+    color: white;
+    font-size: 35px;
+}
+
+#save:hover{
+    background-color: rgb(255, 79, 79);;
+}
+
+.message{
+    background-color: red;
+    border-radius: 10px;
+    padding: 0 10px 0 10px;
+    position: absolute;
+    font-size: 25px;
+}
+
+.message__text{
+    color: white;
+
+}
+
+@media (max-width: 1391px) {
+    .figure, .tile, .pick{
         width: 60px;
         height: 60px;
-    }
-
-    .chess-tools{
-        height: 400px;
-        font-size: 20px;
-    }
-
-    .pick{
-        height: 60px;
-        width: 60px;
     }
 
     .row{
         height: 60px;
     }
 
-    .tile{
-        height: 60px;
-        width: 60px;
+    .Fcount{
+        width: 45px;
+        height: 45px;
     }
+
+    .coordsX{
+        height: 30px;
+    }
+
+    .coordsY{
+        width: 30px;
+    }
+
+    .container{
+        flex-direction: column;
+    }
+
 }
-
-@media (max-width: 750px) {
-    .figure{
-        width: 30px;
-        height: 30px;
-    }
-
-    .chess-data{
-        height: 240px;
-        font-size: 20px;
-    }
-
-    .pick{
-        height: 30px;
-        width: 30px;
-    }
-
-    .row{
-        height: 30px;
-    }
-
-    .tile{
-        height: 30px;
-        width: 30px;
-    }
-}
-
-
-
