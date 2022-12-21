@@ -20,6 +20,8 @@ let chesslog = document.querySelector('.chess-log');
 let generation = [['Rb','Hb','Bb','Qb','Kb','Bb','Hb','Rb'], ['Pb','Pb','Pb','Pb','Pb','Pb','Pb','Pb'], '00000000', '00000000', '00000000', '00000000', ['Pw','Pw','Pw','Pw','Pw','Pw','Pw','Pw'], ['Rw','Hw','Bw','Qw','Kw','Bw','Hw','Rw']];
 
 let field;
+let fieldContainer = document.querySelector('.field-container');
+let fieldContainerX = document.querySelector('.field-container__X');
 
 let figureNames = {
     K: 'king',
@@ -80,9 +82,10 @@ save.onclick = function(){
     name1.textContent = input_name1.value;
     name2.textContent = input_name2.value;
 
-    field = new Field(8, 8, true, generation);
+    field = new Field(8, true, generation);
     field.createField();
     field.generate();
+    field.setChessCoords();
 
     
 }
@@ -115,16 +118,36 @@ function pushMessage(text){
     message.style.left = bounds.left + bounds.width / 2 - message.offsetWidth / 2 + 'px';
     message.style.top = bounds.top - message.offsetHeight  - 15 + 'px';
 
+ 
+    animate({
+        duration: 3000,
+        timing(timefr){
+            return Math.pow(timefr, 2)
+        },
+        draw(progress){
+            message.style.opacity = 100 - progress * 100 + '%';
+        },
+        
+    });
+    
 
-    let opacity = 100;
+    function animate({timing, draw, duration}){
 
-    let interval = setInterval(() => {
-        message.style.opacity = (opacity -= 1) + '%';
-        if(!opacity) {
-            clearInterval(interval);
-            message.remove();
-        }
-    }, 30);
+        let start = performance.now();
+
+        requestAnimationFrame(function hide(time){
+
+            let timefr = (time - start) / duration;
+
+            if(timefr > 1) timefr = 1;
+            let progress = timing(timefr);
+
+            draw(progress);
+            if(timefr < 1) requestAnimationFrame(hide);
+        });
+
+        
+    }
 
 }
 
@@ -210,7 +233,7 @@ class Figure{
 
         if(tile.figure) tile.figure.beat();
 
-        field.logMemory.set(chesslog.lastElementChild, field.currentCounters.map(arr => [...arr])); 
+        field.logMemory.set(field.currentRowLog.lastElementChild, field.currentCounters.map(arr => [...arr])); 
 
         this.prevTile = this.tile;
 
@@ -538,7 +561,7 @@ class Figure{
         for(let i = 1; i <= n; i++){
             let tile = field.tiles.find(elem => elem.x === this.x && elem.y === this.y + i * v);
             if(!tile) break;
-            
+
             result.push(tile);
             if(tile.figure) break;
         }
@@ -623,7 +646,7 @@ class Figure{
 
 
 class Field{
-    constructor(width, height, currentPlay, gen){
+    constructor(scale, currentPlay, gen){
         this.Field = document.querySelector('#field');
         this.currentPlay = currentPlay;
         this.gen = gen;
@@ -633,8 +656,7 @@ class Field{
         this.players = [name1.textContent, name2.textContent];
         this.korols = [];
 
-        this.width = width;
-        this.height = height;
+        this.scale = scale;
 
         this.fieldArr = [];
 
@@ -656,6 +678,7 @@ class Field{
         this.endgame = false;
         this.currentCounters = [[], []];
         this.logMemory = new WeakMap();
+        this.currentRowLog = createElement('div', 'chess-log__row');
         this.timer = null;
 
         this.coordsX = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; 
@@ -666,30 +689,23 @@ class Field{
                             Q: '♕',
                             K: '♔'}
 
-        chesslog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
+        this.currentRowLog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
+        chesslog.append(this.currentRowLog);
 
     }
 
     createField(){
 
         let white = true;
-
-        let coordsX = createElement('div', 'coordsX');
-        let coordsY = createElement('div', 'coordsY');
-
+        
         let rows = [];
-        for(let i = 0; i < this.height; i++){
-
-            coordsX.insertAdjacentHTML('beforeend',`<p>${this.coordsX[i]}</p>`);
-            coordsY.insertAdjacentHTML('beforeend',`<p>${this.coordsY[i]}</p>`);
+        for(let i = 0; i < this.scale; i++){
 
             let row = createElement('div', 'row');
-            for(let j = 0; j < this.width; j++){
+            for(let j = 0; j < this.scale; j++){
 
                 let color = white? 'tileW': 'tileB';
-
-                let tile = createElement('div', 'tile');
-                tile.classList.add(color);
+                let tile = createElement('div', `tile ${color}`);
 
                 tile.x = j;
                 tile.y = i;
@@ -700,24 +716,42 @@ class Field{
             }
 
             rows.push(row);
-
             white = !white;
         }
 
         this.Field.append(...rows);
+        this.tiles = Array.from(this.Field.querySelectorAll('.tile'));      
+    }
 
-        coordsX.style.width = this.Field.offsetWidth + 'px';
-        coordsY.style.height= this.Field.offsetHeight + 'px';
+    setChessCoords(){
 
-        this.Field.before(coordsX);
-        this.Field.after(coordsX.cloneNode(true));
+        setCoordsX.call(this);
+        setCoordsY.call(this);
 
-        this.Field.parentElement.before(coordsY);
-        this.Field.parentElement.after(coordsY.cloneNode(true));
+        function setCoordsX(){
+            let coordsX = createElement('div', 'coords coordsX');
 
-        this.tiles = Array.from(this.Field.querySelectorAll('.tile'));
+            for(let i = 0; i < this.scale; i++){
+                coordsX.insertAdjacentHTML('beforeend',`<p>${this.coordsX[i]}</p>`);
+            }
 
-        
+            fieldContainerX.prepend(coordsX);
+            fieldContainerX.append(coordsX.cloneNode(true));
+
+        }
+
+        function setCoordsY(){
+            let coordsY = createElement('div', 'coords coordsY');
+    
+            for(let i = 0; i < this.scale; i++){
+                coordsY.insertAdjacentHTML('beforeend',`<p>${this.coordsY[i]}</p>`);
+            }
+
+            fieldContainer.prepend(coordsY);
+            fieldContainer.append(coordsY.cloneNode(true));   
+    
+        }
+
     }
 
 
@@ -817,7 +851,7 @@ class Field{
         
         if(this.timer) this.stopTimer();
 
-        this.activateTimer();  
+        if(!this.endgame) this.activateTimer();  
     
     }
 
@@ -825,7 +859,10 @@ class Field{
         let index = +!this.currentPlay;
         let elem = timerElements[index];
 
-        this.timer = setInterval(update.bind(this), 1000);
+        update = update.bind(this);
+
+        update();
+        this.timer = setInterval(update, 1000);
 
         function update(){
             
@@ -836,6 +873,8 @@ class Field{
                 this.stopTimer();
             }
 
+            if(elem.style.color !== 'red' && !time.getHours() && !time.getMinutes() && time.getSeconds() < 30) elem.style.color = 'red';
+            
             elem.textContent = updateTimer(new Date(time));
         }
     }
@@ -878,7 +917,7 @@ class Field{
                                         
                 } 
 
-                chesslog.lastElementChild.textContent += lastSymbol;
+                this.currentRowLog.lastElementChild.textContent += lastSymbol;
             }
 
 
@@ -925,7 +964,8 @@ class Field{
         function moveTo(pageX, pageY){
             if(pageX + elem.offsetWidth / 2 < window.innerWidth && pageX - elem.offsetWidth / 2 > 0){
                 elem.style.left = pageX - elem.offsetWidth / 2 + 'px';
-            }   
+            } 
+            
             if(pageY + elem.offsetHeight / 2 < window.innerHeight && pageY - elem.offsetHeight / 2 > 0){
                 elem.style.top = pageY - elem.offsetHeight / 2 + 'px';
             }  
@@ -1006,12 +1046,14 @@ class Field{
             this.chered = 1;
             this.countMove++;
 
-            if(this.countMove > 4){
-                chesslog.style.height = +chesslog.style.height.slice(0, -2) + 25 + 'px';
-                chesslog.style.gridTemplateRows += ' 1fr';
-            }
-            chesslog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
+            this.currentRowLog = createElement('div', 'chess-log__row');
+            this.currentRowLog.insertAdjacentHTML('beforeend', `<div class="num"><p>${this.countMove}</p></div>`);
+
+            chesslog.append(this.currentRowLog);
+
+            
         }
+
         if(!figure.specialMoves.castlingR.includes(next) && !figure.specialMoves.castlingL.includes(next)){
             let f = figure.type !== 'P'? this.figureIcons[figure.type]: '';
             let pos = '';
@@ -1025,10 +1067,10 @@ class Field{
                 }
             }
     
-            chesslog.insertAdjacentHTML('beforeend', `<div class="move"><p>${f + pos + (next.figure? 'x': '') + this.coordsX[next.x] + this.coordsY[next.y]}</p></div>`);
+            this.currentRowLog.insertAdjacentHTML('beforeend', `<div class="move"><p>${f + pos + (next.figure? 'x': '') + this.coordsX[next.x] + this.coordsY[next.y]}</p></div>`);
             
         }
-        else chesslog.insertAdjacentHTML('beforeend', `<div class="move"><p>${figure.specialMoves.castlingR.includes(next)? 'O-O': 'O-O-O'}</p></div>`);
+        else this.currentRowLog.insertAdjacentHTML('beforeend', `<div class="move"><p>${figure.specialMoves.castlingR.includes(next)? 'O-O': 'O-O-O'}</p></div>`);
             
         
     }
@@ -1087,7 +1129,6 @@ class Field{
 
     timeOver(){
         this.gameover();
-
         this.clearSelected();
 
         this.setGameover(`Время истекло! Победил "${this.players[+this.currentPlay]}"`, 'mate');
@@ -1100,7 +1141,7 @@ class Field{
         gm.textContent = text;
 
         document.body.append(gm);
-        let bounds = document.querySelector('.containerX').getBoundingClientRect();
+        let bounds = fieldContainer.getBoundingClientRect();
 
         gm.style.left = bounds.left + bounds.width / 2 - gm.offsetWidth / 2 +'px';
         gm.style.top = bounds.top - gm.offsetHeight - 50 +'px';
@@ -1112,7 +1153,7 @@ class Field{
         this.Field.style.cursor = 'default';
 
         this.endgame = true;
-
+        
         chesslog.addEventListener('click', (e) => {
             let move = e.target.closest('.move');
             if(!move) return;
@@ -1146,21 +1187,20 @@ class Field{
     logm(){
 
         let result = [];
-        
-        for(let i = 0, k = 0; i < this.height; i++){
+        for(let i = 0, k = 0; i < this.scale; i++){
+
             let row = [];
-            for(let j = 0; j < this.width; j++){
+            for(let j = 0; j < this.scale; j++, k++){
                 if(!this.tiles[k].figure) row.push('0');
                 else{
                     row.push(this.tiles[k].figure.type + (this.tiles[k].figure.color? 'w': 'b'));
-                }
-                k++;
+                }           
             }
             result.push(row);
         }
             
         
-        chesslog.lastElementChild.index = this.logIndex; 
+        this.currentRowLog.lastElementChild.index = this.logIndex; 
 
         this.log.push(result);
         this.logIndex++;
