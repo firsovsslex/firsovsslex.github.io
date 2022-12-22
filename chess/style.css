@@ -472,6 +472,7 @@ body{
 
     .settings{
         min-width: 250px;
+        min-height: 300px;
     }
     
     .settings__time{
@@ -490,9 +491,15 @@ body{
     #save{
         font-size: 25px;
     }
+
+    .endtext{
+        font-size: 20px;
+        padding: 10px 15px 10px 15px;
+    }
+
 }
 
-@media (max-width: 405px){
+@media (max-width: 541px){
     .figure, .tile, .pick{
         width: 30px;
         height: 30px;
