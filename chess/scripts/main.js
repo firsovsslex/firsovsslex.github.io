@@ -35,23 +35,31 @@ let figureNames = {
 let timers = [];
 let timerElements = [document.querySelector('#timer1'), document.querySelector('#timer2')];
 
-let nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-for(let elem of timeInputs){
+setTimeInputs(timeInputs);
 
-    elem.onkeydown = function(e){
-        if(nums.includes(e.key)){
-            if(this.value.length === 2) e.preventDefault();
+
+function setTimeInputs(timeInputs){
+
+    let nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for(let elem of timeInputs){
+        
+        elem.onkeydown = function(e){
+            
+            if(nums.includes(e.key)){
+                if(this.value.length === 2) e.preventDefault();
+            }
+            else if(e.key.length < 2) e.preventDefault();
+
         }
-        else if(e.key.length < 2) e.preventDefault();
 
+        elem.oninput = function(){
+            if(+this.value < 0) this.value = '0';
+            if(this.id === 'hours' && +this.value > 23) this.value = '23';
+            if((this.id === 'minutes' || this.id === 'seconds') && +this.value > 59) this.value = '59';
+        }
+        
     }
 
-    elem.oninput = function(){
-        if(+this.value < 0) this.value = '0';
-        if(this.id === 'hours' && +this.value > 23) this.value = '23';
-        if((this.id === 'minutes' || this.id === 'seconds') && +this.value > 59) this.value = '59';
-    }
-    
 }
 
 save.onclick = function(){
@@ -143,7 +151,7 @@ function pushMessage(text){
             let progress = timing(timefr);
 
             draw(progress);
-            if(timefr < 1) requestAnimationFrame(hide);
+            timefr < 1? requestAnimationFrame(hide): message.remove();
         });
 
         
@@ -679,6 +687,7 @@ class Field{
         this.currentCounters = [[], []];
         this.logMemory = new WeakMap();
         this.currentRowLog = createElement('div', 'chess-log__row');
+        this.tileScale = 0;
         this.timer = null;
 
         this.coordsX = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; 
@@ -712,6 +721,8 @@ class Field{
 
                 row.append(tile);
 
+                if(!this.tileScale) setTimeout(() => this.tileScale = tile.offsetWidth);
+
                 white = !white;
             }
 
@@ -720,6 +731,7 @@ class Field{
         }
 
         this.Field.append(...rows);
+
         this.tiles = Array.from(this.Field.querySelectorAll('.tile'));      
     }
 
@@ -942,7 +954,7 @@ class Field{
                 resolve();
             }
 
-            anim.style.transform = `translate(${offsetX * 90}px, ${offsetY * 90}px)`;
+            anim.style.transform = `translate(${offsetX * this.tileScale}px, ${offsetY * this.tileScale}px)`;
 
         });
         
@@ -1243,3 +1255,4 @@ function createElement(tag, classH, innerText, id){
 
     return elem;
 }
+// тут был петя
