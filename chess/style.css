@@ -249,13 +249,11 @@ body{
 }
 
 
-
 .coordsY{
     flex-direction: column;
     width: 45px;
     padding: 45px 0 45px 0;
 }
-
 
 
 .field-container{
@@ -311,12 +309,9 @@ body{
    min-height: 400px;
 }
 
-.settings__name{
-    font-size: 25px;
-}
-
 .settings__name p{
     display: inline;
+    font-size: 25px;
 }
 
 .settings__time{
@@ -347,13 +342,12 @@ body{
 }
 
 #input-name1, #input-name2{
-    font-size: 20px;
+    font-size: 25px;
     margin: 0 10px 0 10px;
     outline: none;
     border: none;
     border-radius: 10px;
     background-color: rgb(30, 210, 66);
-    font-size: 25px;
     padding: 15px;
     color: white;
 
@@ -469,37 +463,70 @@ body{
     }
 }
 
-@media (max-width: 543px){
+@media (max-width: 602px){
+    #input-name1, #input-name2{
+        font-size: 15px;
+        padding: 8px;
+        width: 120px;
+    }
+
+    .settings{
+        min-width: 250px;
+    }
+    
+    .settings__time{
+        font-size: 15px;
+    }
+
+    .settings__time input{
+        font-size: 10px;
+        width: 25px;
+    }
+
+    .settings__name p{
+        font-size: 15px;
+    }
+
+    #save{
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 405px){
     .figure, .tile, .pick{
-        width: 45px;
-        height: 45px;
-    }
-
-    .row{
-        height: 45px;
-    }
-
-    .Fcount{
         width: 30px;
         height: 30px;
     }
 
+    .row{
+        height: 30px;
+    }
+
+    .Fcount{
+        width: 15px;
+        height: 15px;
+    }
+
     .coords{
-        font-size: 15px;
+        font-size: 10px;
     }
 
     .coordsX{
-        height: 22.5px;
+        height: 15px;
     }
 
     .coordsY{
-        width: 22.5px;
-        padding: 22.5px 0 22.5px 0;
+        width: 15px;
+        padding: 15px 0 15px 0;
     }
 
     .chess-log{
-        font-size: 15px;
+        font-size: 10px;
         height: 50px;
+    }
+
+    .chess-log__row{
+        height: 15px;
     }
 
     .data{
@@ -515,4 +542,5 @@ body{
         font-size: 20px;
         padding: 10px;
     }
+
 }
