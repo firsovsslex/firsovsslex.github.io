@@ -1156,7 +1156,11 @@ class Field{
         let bounds = fieldContainer.getBoundingClientRect();
 
         gm.style.left = bounds.left + bounds.width / 2 - gm.offsetWidth / 2 +'px';
-        gm.style.top = bounds.top - gm.offsetHeight - 50 +'px';
+
+        let top = bounds.top - gm.offsetHeight - 50;
+        gm.style.top = (top < 0? 0: top) + 'px';
+
+        
     }
 
     gameover(){
@@ -1255,4 +1259,3 @@ function createElement(tag, classH, innerText, id){
 
     return elem;
 }
-// тут был петя
