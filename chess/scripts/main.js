@@ -43,20 +43,27 @@ function setTimeInputs(timeInputs){
     let nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     for(let elem of timeInputs){
         
-        elem.onkeydown = function(e){
-            
-            if(nums.includes(e.key)){
-                if(this.value.length === 2) e.preventDefault();
+        elem.addEventListener("beforeinput", function(e){
+
+            if(!e.data) return;
+
+            if(!nums.includes(e.data)){
+                e.preventDefault();
+                return;
             }
-            else if(e.key.length < 2) e.preventDefault();
+       
 
-        }
+            let value = +(this.value.slice(0, this.selectionStart) + e.data + this.value.slice(this.selectionEnd));  
+            
+            if(value < 0) this.value = '0';
+            else if(this.id === 'hours' && value > 23) this.value = '23';
+            else if((this.id === 'minutes' || this.id === 'seconds') && value > 59) this.value = '59';
 
-        elem.oninput = function(){
-            if(+this.value < 0) this.value = '0';
-            if(this.id === 'hours' && +this.value > 23) this.value = '23';
-            if((this.id === 'minutes' || this.id === 'seconds') && +this.value > 59) this.value = '59';
-        }
+            else return;
+
+            e.preventDefault();
+            
+        });
         
     }
 
@@ -162,8 +169,6 @@ function pushMessage(text){
 
 class Figure{
 
-    static id = 0;
-
     constructor(type, tile, color){
 
         let {x, y} = tile;
@@ -177,8 +182,6 @@ class Figure{
         this.y = y;  
         this.indiagonal = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
         this.inline = [[1, 0], [0, 1], [-1, 0], [0, -1]];
-
-        this.id = this.constructor.id++;
 
         this.currentK = null; 
 
@@ -290,39 +293,46 @@ class Figure{
     }
 
     setFigure(e){
-        this.div = createElement('div', 'select-figure');
+        let div = createElement('div', 'select-figure');
 
         let figures = ['Q', 'H', 'R', 'B'];   
         for(let i = 0; i < figures.length; i++){
             let figure = createElement('div', 'pick', null, figures[i]);
+            changeImage(figure, `url(./img/${figureNames[figures[i]] + (this.color? 'W': 'B')}.svg)`);  
 
-            changeImage(figure, `url(./img/${figureNames[figures[i]] + (this.color? 'W': 'B')}.svg)`);       
-            this.div.append(figure);
+            div.append(figure);
         }
 
-        this.div.addEventListener('click', this.pick);
+        div.addEventListener('click', (e) => this.pick(e, div));
 
-        field.Field.append(this.div);
+        field.Field.append(div);
 
-        this.div.style.left = e.clientX - this.div.offsetWidth / 2 + 'px';
+        let offsetY = e.clientY - div.offsetHeight - 30;
+        let offsetX = e.clientX - div.offsetWidth / 2;
 
-
-        let offsetY = e.clientY - this.div.offsetHeight - 30;
         if(offsetY < 0){
             offsetY = e.clientY + 30; 
         }
 
-        this.div.style.top = offsetY + 'px';
+        if(offsetX < 0){
+            offsetX = 0;
+        }
+        else if(offsetX + div.offsetWidth > window.innerWidth){
+            offsetX = window.innerWidth - div.offsetWidth;
+        }
+
+        div.style.top = offsetY + 'px';
+        div.style.left = offsetX + 'px';
 
         field.pawnSet = true;
 
     }
 
-    pick(e){
+    pick(e, div){
         let pick = e.target;
         if(!pick.classList.contains('pick')) return;
 
-        this.div.remove();
+        div.remove();
 
         let currentTile = this.tile;
         let prevTile = this.prevTile;
@@ -494,6 +504,7 @@ class Figure{
     updatePawnSpecialMoves(){
 
         let v = this.color? -1: 1;
+
         return this.allTiles.filter(elem => {
             if(elem.y === this.y + 1 * v && (elem.x === this.x - 1 || elem.x === this.x + 1)){
                 
@@ -503,26 +514,23 @@ class Figure{
                         if(!pass) return false;
 
                         if(pass.figure === field.prevFigure && (this.color && pass.figure.prevTile.y === 1 || !this.color && pass.figure.prevTile.y === 6)){
-                            this.specialMoves.passMove.push(elem);
-                        
+                            this.specialMoves.passMove.push(elem);                      
                         }                                                 
                     }
 
                     return false;
                 }
-                else if(elem.figure.color === this.color){
-                    return false;
-                }
+                else if(elem.figure.color === this.color) return false;
+                
 
             }
             else if(elem.figure) return false;
 
-            if(elem.y === 0 && this.color || elem.y === field.height - 1 && !this.color){
+            if(elem.y === 0 && this.color || !this.color && elem.y === field.scale - 1){
 
                 this.specialMoves.lastMove.push(elem);
-
-
                 return false;
+
             }
 
             return true;
@@ -721,8 +729,6 @@ class Field{
 
                 row.append(tile);
 
-                if(!this.tileScale) setTimeout(() => this.tileScale = tile.offsetWidth);
-
                 white = !white;
             }
 
@@ -824,7 +830,8 @@ class Field{
 
                 this.clearSelected();
 
-                if(this.figureSelected.type === 'K') this.figureSelected.tile.style.backgroundColor = '';          
+                if(this.figureSelected.type === 'K') this.figureSelected.tile.style.backgroundColor = '';       
+                if(this.tileScale !== tile.offsetWidth) this.tileScale = tile.offsetWidth;   
 
                 this.writeMove(tile, this.figureSelected);              
                 this.animateFigure(tile, this.figureSelected)
@@ -962,25 +969,38 @@ class Field{
 
     drag(event){
 
-        if(this.pawnSet || this.animate) return;
+        if(this.pawnSet || this.animate || !event.isPrimary) return;
 
-        let elem = event.target;
-        if(!elem.closest('.tile')) return;
-        if(!elem.parentElement.figure) return;
-        if(this.currentPlay !== elem.parentElement.figure.color) return;
+        let parentTile  = event.target.closest('.tile');
 
+        if(!parentTile?.figure) return;
+        if(this.currentPlay !== parentTile.figure.color) return;
+
+        let elem = parentTile.firstElementChild;
         elem.style.zIndex = 99;
 
-        if(!elem.style.position) elem.style.position = 'absolute';
+        let bounds = elem.getBoundingClientRect();
 
         function moveTo(pageX, pageY){
-            if(pageX + elem.offsetWidth / 2 < window.innerWidth && pageX - elem.offsetWidth / 2 > 0){
-                elem.style.left = pageX - elem.offsetWidth / 2 + 'px';
+            if(pageX + bounds.width / 2 > window.innerWidth){
+                elem.style.left = window.innerWidth - bounds.left - bounds.width + 'px';
             } 
+            else if(pageX - bounds.width / 2 < 0){
+                elem.style.left = 0 - bounds.left + 'px';
+            }
+
+            else elem.style.left = pageX - bounds.left - bounds.width / 2 + 'px';
+      
             
-            if(pageY + elem.offsetHeight / 2 < window.innerHeight && pageY - elem.offsetHeight / 2 > 0){
-                elem.style.top = pageY - elem.offsetHeight / 2 + 'px';
+            if(pageY + bounds.height / 2 > window.innerHeight){
+                elem.style.top = window.innerHeight - bounds.top - bounds.height + 'px';
             }  
+
+            else if(pageY - bounds.height / 2 < 0){
+                elem.style.top = 0 - bounds.top + 'px';
+            }
+
+            else  elem.style.top = pageY - bounds.top - elem.offsetHeight / 2 + 'px';
         }
 
         mouseMove = mouseMove.bind(this);
@@ -997,14 +1017,11 @@ class Field{
             moveTo(e.pageX, e.pageY);
 
             elem.hidden = true;
-
             let pos = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
-
             elem.hidden = false;
 
             if(!pos) return;
-            if(pos === currentTile) return;
-            if(pos === elem.parentElement) return;
+            if(pos === currentTile || pos === parentTile) return;
 
             if(currentTile){
                 if(currentTile.figure){
@@ -1032,7 +1049,7 @@ class Field{
             document.removeEventListener('pointerup', reset);
 
             elem.style.cssText = '';
-            if(currentTile && currentTile !== elem.parentElement) changeColor(currentTile, '');
+            if(currentTile && currentTile !== parentTile) changeColor(currentTile, '');
 
             let tile = document.elementFromPoint(e.clientX, e.clientY)?.closest('.tile');
             if(tile && tile.selected){
