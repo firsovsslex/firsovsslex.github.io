@@ -2,6 +2,8 @@
 import {Circle} from './circle.js';
 import {Player} from './player.js';
 
+let mobile = isMobile();
+
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext("2d");
 
@@ -133,7 +135,7 @@ function start(){
         canvas.removeEventListener('pointermove', player.toMouseXY);
         // document.removeEventListener('visibilitychange', changeW);
 
-        if(!navigator.userAgentData.mobile){
+        if(!mobile){
             document.removeEventListener('keydown', space);
         }
         else{
@@ -170,7 +172,7 @@ function start(){
 
     canvas.addEventListener('pointermove', player.toMouseXY);
 
-    if(!navigator.userAgentData.mobile){
+    if(!mobile){
         document.addEventListener('keydown', space);
     }
     else{
@@ -222,7 +224,7 @@ function start(){
 }
 
 
-if(!navigator.userAgentData.mobile){
+if(!mobile){
     document.addEventListener('keydown', function(e){
         if(e.code === 'Enter'){
             restart(e);
@@ -231,6 +233,14 @@ if(!navigator.userAgentData.mobile){
 }
 
 document.body.addEventListener('pointerdown', restart);
+
+function isMobile(){
+    if(navigator.userAgent.match(/(Android)|(webOS)|(iPhone)|(iP[ao]d)|(BlackBerry)|(Windows Phone)/i)){
+        return true;        
+    }
+
+    return false;
+}
 
 function restart(e){
     if(startText)
