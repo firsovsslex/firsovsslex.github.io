@@ -74,6 +74,7 @@ body{
     justify-content: center;
     align-items: center;
     font-size: 30px;
+    box-sizing: border-box;
     
     -moz-user-select: -moz-none;
     -o-user-select: none;
