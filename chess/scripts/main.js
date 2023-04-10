@@ -17,7 +17,15 @@ let seconds = document.querySelector('#seconds');
 let figureCounters = [document.querySelector('#data-figures1'), document.querySelector('#data-figures2')];
 let chesslog = document.querySelector('.chess-log');
 
-let generation = [['Rb','Hb','Bb','Qb','Kb','Bb','Hb','Rb'], ['Pb','Pb','Pb','Pb','Pb','Pb','Pb','Pb'], '00000000', '00000000', '00000000', '00000000', ['Pw','Pw','Pw','Pw','Pw','Pw','Pw','Pw'], ['Rw','Hw','Bw','Qw','Kw','Bw','Hw','Rw']];
+let generation = [['Rb','Hb','Bb','Qb','Kb','Bb','Hb','Rb'],
+                  ['Pb','Pb','Pb','Pb','Pb','Pb','Pb','Pb'],
+                  '00000000',
+                  '00000000',
+                  '00000000',
+                  '00000000',
+                  ['Pw','Pw','Pw','Pw','Pw','Pw','Pw','Pw'],
+                  ['Rw','Hw','Bw','Qw','Kw','Bw','Hw','Rw']
+                 ];
 
 let field;
 let fieldContainer = document.querySelector('.field-container');
@@ -40,28 +48,30 @@ setTimeInputs(timeInputs);
 
 function setTimeInputs(timeInputs){
 
-    let nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    let hourRegExp = /^(\d|(2[0-3])|[0-1]\d)$/;
+    let defaultRegExp = /^(\d|[0-5]\d)$/;
+
     for(let elem of timeInputs){
         
         elem.addEventListener("beforeinput", function(e){
 
             if(!e.data) return;
 
-            if(!nums.includes(e.data)){
+            if(!/\d+/.test(e.data)){
                 e.preventDefault();
                 return;
             }
-       
 
-            let value = +(this.value.slice(0, this.selectionStart) + e.data + this.value.slice(this.selectionEnd));  
-            
-            if(value < 0) this.value = '0';
-            else if(this.id === 'hours' && value > 23) this.value = '23';
-            else if((this.id === 'minutes' || this.id === 'seconds') && value > 59) this.value = '59';
+            let value = this.value.slice(0, this.selectionStart) + e.data + this.value.slice(this.selectionEnd);
 
-            else return;
-
-            e.preventDefault();
+            if(this.id === 'hours'){
+                if(!hourRegExp.test(value)) e.preventDefault();       
+            }
+            else if(!defaultRegExp.test(value)){
+                e.preventDefault();
+            }
+        
             
         });
         
@@ -89,8 +99,6 @@ save.onclick = function(){
         if(!time.getHours() && !time.getMinutes() && time.getSeconds() < 30) timerElements[i].style.color = 'red';
         timerElements[i].textContent = updateTimer(time);
     }
-
-  
 
     modal.remove();
 
@@ -879,8 +887,6 @@ class Field{
         let elem = timerElements[index];
 
         update = update.bind(this);
-
-        update();
         this.timer = setInterval(update, 1000);
 
         function update(){
@@ -888,8 +894,8 @@ class Field{
             let time = new Date(timers[index] -= 1000);           
 
             if(!time.getHours() && !time.getMinutes() && !time.getSeconds()){
-                this.timeOver();
                 this.stopTimer();
+                this.timeOver();
             }
 
             if(elem.style.color !== 'red' && !time.getHours() && !time.getMinutes() && time.getSeconds() < 30) elem.style.color = 'red';
@@ -1158,7 +1164,7 @@ class Field{
 
     timeOver(){
         this.gameover();
-        this.clearSelected();
+        if(this.figureSelected) this.clearSelected();
 
         this.setGameover(`Время истекло! Победил "${this.players[+this.currentPlay]}"`, 'mate');
     }
@@ -1176,8 +1182,7 @@ class Field{
 
         let top = bounds.top - gm.offsetHeight - 50;
         gm.style.top = (top < 0? 0: top) + 'px';
-
-        
+      
     }
 
     gameover(){
@@ -1256,7 +1261,6 @@ class Field{
     }
 
     }
-
 
 
 function changeColor(elem, color){
